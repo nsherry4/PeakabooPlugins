@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+	<artifactId>FilterProgramming</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>FilterProgramming</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sciencestudio.peakaboo</groupId>
+			<artifactId>PeakabooSDK</artifactId>
+			<version>4.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sciencestudio.libs</groupId>
+			<artifactId>BoltCode</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/de.sciss/syntaxpane -->
+		<dependency>
+			<groupId>de.sciss</groupId>
+			<artifactId>syntaxpane</artifactId>
+			<version>1.1.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.ezware.oxbow</groupId>
+			<artifactId>TaskDialog</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<!-- Here we force the jar to build with the required library included -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>net.sciencestudio.libs:BoltCode</include>
+									<include>org.eclipse.jdt.core.compiler:ecj</include>
+<!-- 									<include>org.python:jython-standalone</include> -->
+<!-- 									<include>org.scijava:jython-shaded</include> -->
+									<include>de.sciss:syntaxpane</include>
+									<include>com.ezware.oxbow:TaskDialog</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
