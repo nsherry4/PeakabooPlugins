@@ -22,17 +22,16 @@ import javax.swing.JToolBar;
 import com.ezware.dialog.task.TaskDialogs;
 
 import autodialog.model.Parameter;
-import autodialog.view.editors.IEditor;
+import autodialog.view.swing.editors.AbstractSwingEditor;
 import commonenvironment.Env;
 import de.sciss.syntaxpane.DefaultSyntaxKit;
-import eventful.Eventful;
 import swidget.dialogues.fileio.SwidgetIO;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;
 import swidget.widgets.Spacing;
 import swidget.widgets.ToolbarImageButton;
 
-public class CodeEditor extends Eventful implements IEditor<String>
+public class CodeEditor extends AbstractSwingEditor<String>
 {
 
 	
@@ -70,7 +69,8 @@ public class CodeEditor extends Eventful implements IEditor<String>
         	codeEditor.setContentType("text/" + language);
         }
         
-        codeEditor.setText((String)param.getValue());
+        setFromParameter();
+        param.getValueHook().addListener(v -> this.setFromParameter());
         
         
         JToolBar toolbar = new JToolBar();
@@ -140,7 +140,7 @@ public class CodeEditor extends Eventful implements IEditor<String>
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateListeners();
+				getValueHook().updateListeners(getEditorValue());
 			}
 		});
 		
@@ -215,6 +215,11 @@ public class CodeEditor extends Eventful implements IEditor<String>
 			);
 		
 		errorMessage = "";
+	}
+
+	@Override
+	public Parameter<String> getParameter() {
+		return param;
 	}
 	
 }

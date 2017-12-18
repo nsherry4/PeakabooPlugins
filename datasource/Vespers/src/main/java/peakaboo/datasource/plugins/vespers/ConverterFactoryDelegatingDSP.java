@@ -24,9 +24,9 @@ import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.data.support.ConverterFactoryException;
 import peakaboo.datasource.DataSource;
-import peakaboo.datasource.PluginDataSource;
 import peakaboo.datasource.components.fileformat.FileFormat;
 import peakaboo.datasource.components.fileformat.FileFormatCompatibility;
+import peakaboo.datasource.framework.PluginDataSource;
 import peakaboo.datasource.internal.DelegatingDataSource;
 import peakaboo.datasource.plugins.vespers.vespers.data.converter.factory.MapXYVespersToPDSConverterFactory;
 

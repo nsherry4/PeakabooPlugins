@@ -2,8 +2,9 @@ package peakaboo.filter.plugins.programming;
 
 
 import autodialog.model.Parameter;
-import bolt.scripting.BoltMap;
+import autodialog.model.style.styles.TextAreaStyle;
 import bolt.scripting.BoltScriptExecutionException;
+import bolt.scripting.functions.BoltMap;
 import bolt.scripting.languages.Language;
 import bolt.scripting.languages.PythonLanguage;
 import de.sciss.syntaxpane.syntaxkits.PythonSyntaxKit;
@@ -61,8 +62,8 @@ public class JPython extends AbstractSimpleFilter {
 	@Override
 	public void initialize() 
 	{
-		editor = new CodeEditor("python", new PythonSyntaxKit());
-		code = new Parameter<>("JPython Code", editor, header + "spectrumOut = spectrumIn");
+		//editor = new CodeEditor("python", new PythonSyntaxKit());
+		code = new Parameter<>("JPython Code", new TextAreaStyle(), header + "spectrumOut = spectrumIn");
 		addParameter(code);
 	}
 

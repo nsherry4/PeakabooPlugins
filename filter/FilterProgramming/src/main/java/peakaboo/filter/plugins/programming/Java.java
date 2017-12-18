@@ -2,9 +2,11 @@ package peakaboo.filter.plugins.programming;
 
 
 import autodialog.model.Parameter;
+import autodialog.view.swing.editors.SwingEditorFactory;
 import bolt.compiler.BoltJavaMap;
 import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
 import peakaboo.filter.editors.CodeEditor;
+import peakaboo.filter.editors.JavaCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import scitypes.ISpectrum;
 import scitypes.ReadOnlySpectrum;
@@ -13,6 +15,10 @@ import scitypes.Spectrum;
 
 public class Java extends AbstractSimpleFilter {
 
+	static {
+		SwingEditorFactory.registerStyleProvider("java-code-editor", () -> new CodeEditor("java", new JavaSyntaxKit()));
+	}
+	
 	BoltJavaMap<float[], float[]> boltJavaMap;
 	
 	private Parameter<String> code;
@@ -40,9 +46,7 @@ public class Java extends AbstractSimpleFilter {
 	
 	@Override
 	public void initialize() {
-		
-		editor = new CodeEditor("java", new JavaSyntaxKit());
-		code = new Parameter<>("Java Code", editor, defaultCode);
+		code = new Parameter<>("Java Code", new JavaCodeStyle(), defaultCode);
 		addParameter(code);
 	}
 	

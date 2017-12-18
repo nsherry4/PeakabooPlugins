@@ -2,12 +2,15 @@ package peakaboo.filter.plugins.programming;
 
 
 import autodialog.model.Parameter;
-import bolt.scripting.BoltMap;
+import autodialog.view.swing.editors.SwingEditorFactory;
 import bolt.scripting.BoltScriptExecutionException;
+import bolt.scripting.functions.BoltMap;
 import bolt.scripting.languages.JavascriptLanguage;
 import bolt.scripting.languages.Language;
 import de.sciss.syntaxpane.syntaxkits.JavaScriptSyntaxKit;
+import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
 import peakaboo.filter.editors.CodeEditor;
+import peakaboo.filter.editors.JavaScriptCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import scitypes.ISpectrum;
 import scitypes.ReadOnlySpectrum;
@@ -16,6 +19,11 @@ import scitypes.Spectrum;
 
 public class JavaScript extends AbstractSimpleFilter {
 
+	static {
+		SwingEditorFactory.registerStyleProvider("javascript-code-editor", () -> new CodeEditor("JavaScript", new JavaScriptSyntaxKit()));
+	}
+	
+	
 	Parameter<String> code;
 	private CodeEditor editor;	
 	private boolean jsSupported = true;
@@ -57,8 +65,7 @@ public class JavaScript extends AbstractSimpleFilter {
 	@Override
 	public void initialize() 
 	{
-		editor = new CodeEditor("JavaScript", new JavaScriptSyntaxKit());
-		code = new Parameter<>("JavaScript Code", editor, header + "spectrumOut = spectrumIn;");
+		code = new Parameter<>("JavaScript Code", new JavaScriptCodeStyle(), header + "spectrumOut = spectrumIn;");
 		addParameter(code);
 	}
 
