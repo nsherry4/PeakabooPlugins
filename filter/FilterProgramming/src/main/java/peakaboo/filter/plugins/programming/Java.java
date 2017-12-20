@@ -8,9 +8,9 @@ import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.editors.JavaCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
+import peakaboo.filter.model.FilterType;
 import scitypes.ISpectrum;
 import scitypes.ReadOnlySpectrum;
-import scitypes.Spectrum;
 
 
 public class Java extends AbstractSimpleFilter {
@@ -46,7 +46,7 @@ public class Java extends AbstractSimpleFilter {
 	
 	@Override
 	public void initialize() {
-		code = new Parameter<>("Java Code", new JavaCodeStyle(), defaultCode);
+		code = new Parameter<>("Java Code", new JavaCodeStyle(), defaultCode, this::validate);
 		addParameter(code);
 	}
 	
@@ -56,8 +56,7 @@ public class Java extends AbstractSimpleFilter {
 	}
 
 
-	@Override
-	public boolean validateParameters() {
+	public boolean validate(Parameter<String> p) {
 		
 		try {
 						
@@ -79,7 +78,7 @@ public class Java extends AbstractSimpleFilter {
 	protected ReadOnlySpectrum filterApplyTo(ReadOnlySpectrum data) {
 		
 		//in this plugin, validate also puts the user code into the mapper 
-		validateParameters();
+		validate(code);
 		
 		return new ISpectrum(boltJavaMap.apply(data.backingArrayCopy()));
 	}

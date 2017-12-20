@@ -8,13 +8,12 @@ import bolt.scripting.functions.BoltMap;
 import bolt.scripting.languages.JavascriptLanguage;
 import bolt.scripting.languages.Language;
 import de.sciss.syntaxpane.syntaxkits.JavaScriptSyntaxKit;
-import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.editors.JavaScriptCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
+import peakaboo.filter.model.FilterType;
 import scitypes.ISpectrum;
 import scitypes.ReadOnlySpectrum;
-import scitypes.Spectrum;
 
 
 public class JavaScript extends AbstractSimpleFilter {
@@ -65,7 +64,7 @@ public class JavaScript extends AbstractSimpleFilter {
 	@Override
 	public void initialize() 
 	{
-		code = new Parameter<>("JavaScript Code", new JavaScriptCodeStyle(), header + "spectrumOut = spectrumIn;");
+		code = new Parameter<>("JavaScript Code", new JavaScriptCodeStyle(), header + "spectrumOut = spectrumIn;", this::validate);
 		addParameter(code);
 	}
 
@@ -84,8 +83,7 @@ public class JavaScript extends AbstractSimpleFilter {
 		return FilterType.PROGRAMMING;
 	}
 
-	@Override
-	public boolean validateParameters() {
+	public boolean validate(Parameter<String> p) {
 		try {
 			boltmap.setScript(getCode());
 			if (  boltmap.apply(new float[]{1, 2, 3, 4}) instanceof float[]  ){

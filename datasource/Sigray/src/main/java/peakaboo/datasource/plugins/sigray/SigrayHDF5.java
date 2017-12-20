@@ -8,7 +8,6 @@ import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 import peakaboo.datasource.AbstractDataSource;
-import peakaboo.datasource.DataSourceLoader;
 import peakaboo.datasource.components.datasize.DataSize;
 import peakaboo.datasource.components.datasize.SimpleDataSize;
 import peakaboo.datasource.components.fileformat.FileFormat;

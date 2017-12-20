@@ -140,7 +140,10 @@ public class CodeEditor extends AbstractSwingEditor<String>
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getValueHook().updateListeners(getEditorValue());
+				getEditorValueHook().updateListeners(getEditorValue());
+				if (!param.setValue(getEditorValue())) {
+					validateFailed();
+				}
 			}
 		});
 		
@@ -193,9 +196,9 @@ public class CodeEditor extends AbstractSwingEditor<String>
 	}
 
 	@Override
-	public void setFromParameter()
+	public void setEditorValue(String code)
 	{
-		codeEditor.setText((String)param.getValue());
+		codeEditor.setText(code);
 	}
 
 	@Override
@@ -204,7 +207,6 @@ public class CodeEditor extends AbstractSwingEditor<String>
 		return codeEditor.getText();
 	}
 
-	@Override
 	public void validateFailed() {
 		JOptionPane.showMessageDialog(
 				panel, 
@@ -217,9 +219,5 @@ public class CodeEditor extends AbstractSwingEditor<String>
 		errorMessage = "";
 	}
 
-	@Override
-	public Parameter<String> getParameter() {
-		return param;
-	}
 	
 }

@@ -2,17 +2,14 @@ package peakaboo.filter.plugins.programming;
 
 
 import autodialog.model.Parameter;
-import autodialog.model.style.styles.TextAreaStyle;
+import autodialog.model.style.editors.TextAreaStyle;
 import bolt.scripting.BoltScriptExecutionException;
 import bolt.scripting.functions.BoltMap;
-import bolt.scripting.languages.Language;
-import bolt.scripting.languages.PythonLanguage;
-import de.sciss.syntaxpane.syntaxkits.PythonSyntaxKit;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.model.AbstractSimpleFilter;
+import peakaboo.filter.model.FilterType;
 import scitypes.ISpectrum;
 import scitypes.ReadOnlySpectrum;
-import scitypes.Spectrum;
 
 
 public class JPython extends AbstractSimpleFilter {
@@ -63,7 +60,7 @@ public class JPython extends AbstractSimpleFilter {
 	public void initialize() 
 	{
 		//editor = new CodeEditor("python", new PythonSyntaxKit());
-		code = new Parameter<>("JPython Code", new TextAreaStyle(), header + "spectrumOut = spectrumIn");
+		code = new Parameter<>("JPython Code", new TextAreaStyle(), header + "spectrumOut = spectrumIn", this::validate);
 		addParameter(code);
 	}
 
@@ -82,8 +79,7 @@ public class JPython extends AbstractSimpleFilter {
 		return FilterType.PROGRAMMING;
 	}
 
-	@Override
-	public boolean validateParameters() {
+	public boolean validate(Parameter<String> p) {
 		try {
 			boltmap.setScript(getCode());
 			if (  boltmap.apply(new float[]{1, 2, 3, 4}) instanceof float[]  ){
