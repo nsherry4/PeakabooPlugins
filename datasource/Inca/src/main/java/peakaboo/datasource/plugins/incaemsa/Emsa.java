@@ -3,6 +3,7 @@ package peakaboo.datasource.plugins.incaemsa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +43,12 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	 ******************************/
 	@Override
 	public List<String> getFileExtensions() {
-		return Collections.singletonList("txt");
+		return Arrays.asList("txt", "emsa");
 	}
 
 	@Override
 	public FileFormatCompatibility compatibility(File file) {
-		if (!file.getAbsolutePath().endsWith(".txt")) return FileFormatCompatibility.NO;
+		if (!file.getAbsolutePath().endsWith(".txt") && !file.getAbsolutePath().endsWith(".emsa")) return FileFormatCompatibility.NO;
 		
 		try {
 			Scanner scanner = new Scanner(file);
