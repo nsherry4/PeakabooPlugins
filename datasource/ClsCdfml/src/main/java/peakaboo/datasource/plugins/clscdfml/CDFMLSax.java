@@ -323,10 +323,9 @@ public class CDFMLSax extends AbstractDataSource implements Metadata, DataSize, 
 	}
 
 
-	
+	@Override
 	public float maxEnergy()
 	{
-		
 		String maxEnergyValue;
 		
 		if (reader.hasAttr(CDFMLStrings.ATTR_MCA_MAX_ENERGY)) {

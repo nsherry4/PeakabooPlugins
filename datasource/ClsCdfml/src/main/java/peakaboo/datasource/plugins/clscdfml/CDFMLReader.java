@@ -22,6 +22,7 @@ import peakaboo.datasource.SpectrumList;
 import scitypes.ISpectrum;
 import scitypes.Pair;
 import scitypes.Range;
+import scitypes.SparsedList;
 import scitypes.Spectrum;
 
 
@@ -286,7 +287,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 		List<String> entryList = attrEntries.get(tagAttrName);
 		if (entryList == null)
 		{
-			entryList = new ArrayList<String>();
+			entryList = new SparsedList<>(new ArrayList<String>());
 			attrEntries.put(tagAttrName, entryList);
 		}
 
@@ -338,13 +339,13 @@ public abstract class CDFMLReader extends DefaultHandler2
 			
 			case REAL:
 				List<Float> fvalues = (List<Float>)variableEntries.get(variableName);
-				if (fvalues == null) variableEntries.put(variableName, new ArrayList<>(varRecordCount(variableName)));
+				if (fvalues == null) variableEntries.put(variableName, new SparsedList<>(new ArrayList<>(varRecordCount(variableName))));
 				fvalues = (List<Float>)variableEntries.get(variableName);
 				fvalues.set(entryNo, Float.parseFloat(sb.toString()));
 				break;
 			case INTEGER:
 				List<Integer> ivalues = (List<Integer>)variableEntries.get(variableName);
-				if (ivalues == null) variableEntries.put(variableName, new ArrayList<>(varRecordCount(variableName)));
+				if (ivalues == null) variableEntries.put(variableName, new SparsedList<>(new ArrayList<>(varRecordCount(variableName))));
 				ivalues = (List<Integer>)variableEntries.get(variableName);
 				ivalues.set(entryNo, Integer.parseInt(sb.toString()));
 				break;
