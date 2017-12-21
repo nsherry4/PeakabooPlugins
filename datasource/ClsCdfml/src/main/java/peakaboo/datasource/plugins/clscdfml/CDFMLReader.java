@@ -17,10 +17,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import fava.datatypes.Pair;
 import peakaboo.common.Version;
 import peakaboo.datasource.SpectrumList;
 import scitypes.ISpectrum;
+import scitypes.Pair;
 import scitypes.Range;
 import scitypes.Spectrum;
 
