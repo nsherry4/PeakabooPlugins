@@ -18,7 +18,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import peakaboo.common.Version;
-import peakaboo.datasource.SpectrumList;
+import peakaboo.datasource.model.SpectrumList;
 import scitypes.ISpectrum;
 import scitypes.Pair;
 import scitypes.Range;

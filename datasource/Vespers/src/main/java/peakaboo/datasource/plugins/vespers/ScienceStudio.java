@@ -2,8 +2,8 @@ package peakaboo.datasource.plugins.vespers;
 
 import java.util.Arrays;
 
-import peakaboo.datasource.components.fileformat.FileFormat;
-import peakaboo.datasource.components.fileformat.SimpleFileFormat;
+import peakaboo.datasource.model.components.fileformat.FileFormat;
+import peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 
 /**
  * @author maxweld

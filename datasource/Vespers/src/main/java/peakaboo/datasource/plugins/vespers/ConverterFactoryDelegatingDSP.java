@@ -23,18 +23,18 @@ import ca.sciencestudio.data.daf.DAFRegexRecordParser;
 import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.data.support.ConverterFactoryException;
-import peakaboo.datasource.DataSource;
-import peakaboo.datasource.components.fileformat.FileFormat;
-import peakaboo.datasource.components.fileformat.FileFormatCompatibility;
-import peakaboo.datasource.framework.JavaPluginDataSource;
-import peakaboo.datasource.internal.DelegatingDataSource;
+import peakaboo.datasource.model.DataSource;
+import peakaboo.datasource.model.components.fileformat.FileFormat;
+import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
+import peakaboo.datasource.model.internal.DelegatingDataSource;
+import peakaboo.datasource.plugin.JavaDataSourcePlugin;
 import peakaboo.datasource.plugins.vespers.vespers.data.converter.factory.MapXYVespersToPDSConverterFactory;
 
 /**
  * @author maxweld
  *
  */
-public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource implements StdConverter, JavaPluginDataSource, FileFormat {
+public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource implements StdConverter, JavaDataSourcePlugin, FileFormat {
 
 	private static final String DATA_FILE_FIRST_LINE = "# CLS Data Acquisition";
 

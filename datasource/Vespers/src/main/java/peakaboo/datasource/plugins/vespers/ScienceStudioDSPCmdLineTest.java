@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import peakaboo.datasource.DataSource;
-import peakaboo.datasource.components.fileformat.FileFormatCompatibility;
+import peakaboo.datasource.model.DataSource;
+import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 import scitypes.ReadOnlySpectrum;
 
 /**
