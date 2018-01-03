@@ -736,7 +736,7 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 
 	@Override
 	public float maxEnergy() {
-		return maxEnergy;
+		return maxEnergy / 1000f;
 	}
 
 	@Override

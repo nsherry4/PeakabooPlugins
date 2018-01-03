@@ -26,7 +26,7 @@ public class ScienceStudio extends ConverterFactoryDelegatingDSP
 	
 	@Override
 	public String getFormatName() {
-		return "CLS Data Acquisition Format";
+		return "VESPERS CLS Data Acquisition Format";
 	}
 
 	@Override
