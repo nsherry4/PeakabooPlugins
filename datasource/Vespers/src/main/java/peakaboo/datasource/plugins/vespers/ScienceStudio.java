@@ -1,9 +1,6 @@
 package peakaboo.datasource.plugins.vespers;
 
-import java.util.Arrays;
-
 import peakaboo.datasource.model.components.fileformat.FileFormat;
-import peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 
 /**
  * @author maxweld
@@ -46,11 +43,7 @@ public class ScienceStudio extends ConverterFactoryDelegatingDSP
 	
 	@Override
 	public FileFormat getFileFormat() {
-		return new SimpleFileFormat(
-				true, 
-				"Vespers XRF", 
-				"Data format used by the Canadian Light Source for XRF collection on the VESPERS beamline", 
-				Arrays.asList("dat"));
+		return this;
 	}
 
 
