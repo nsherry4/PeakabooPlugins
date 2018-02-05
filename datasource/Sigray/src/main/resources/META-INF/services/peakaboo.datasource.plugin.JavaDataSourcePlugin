@@ -1,1 +1,2 @@
 peakaboo.datasource.plugins.sigray.SigrayHDF5
+peakaboo.datasource.plugins.sigraynew.SigrayHDF5

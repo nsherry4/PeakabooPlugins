@@ -29,9 +29,6 @@ public class SigrayHDF5 extends AbstractDataSource {
 	private SimpleDataSize dataSize;
 	private SigrayHDF5Dimensions physicalSize;
 
-	//static {
-    //    System.load("/usr/lib/jni/libsis-jhdf5.so");
-	//}
 
 	@Override
 	public String pluginVersion() {
@@ -146,11 +143,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 	@Override
 	public FileFormat getFileFormat() {
-		return new SimpleFileFormat(
-				true, 
-				"Sigray HDF5", 
-				"Sigray XRF scans in an HDF5 container", 
-				Arrays.asList("h5"));
+		return new SigrayHDF5FileFormat();
 	}
 
 	@Override
