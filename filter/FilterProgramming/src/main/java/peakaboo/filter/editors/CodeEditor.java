@@ -36,7 +36,6 @@ public class CodeEditor extends AbstractSwingEditor<String>
 
 	
 	public JEditorPane codeEditor;
-	private Parameter<String> param;
 	
 	private String language;
 	private DefaultSyntaxKit syntaxKit;
@@ -99,6 +98,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
 						new String[]{"Java Source Files"}, 
 						Env.homeDirectory()
 					);
+				if (file == null) { return; }
 				try
 				{
 					Scanner s = new Scanner(new FileInputStream(file)).useDelimiter("\\A");
