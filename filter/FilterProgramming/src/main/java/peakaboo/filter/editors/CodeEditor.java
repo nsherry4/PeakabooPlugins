@@ -36,6 +36,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
 
 	
 	public JEditorPane codeEditor;
+	public JToolBar toolbar;
 	
 	private String language;
 	private DefaultSyntaxKit syntaxKit;
@@ -72,7 +73,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
         param.getValueHook().addListener(v -> this.setFromParameter());
         
         
-        JToolBar toolbar = new JToolBar();
+        toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.setOpaque(false);
         toolbar.setBorder(Spacing.bNone());
@@ -217,6 +218,12 @@ public class CodeEditor extends AbstractSwingEditor<String>
 			);
 		
 		errorMessage = "";
+	}
+
+	@Override
+	protected void setEnabled(boolean enabled) {
+		codeEditor.setEnabled(enabled);
+		toolbar.setEnabled(enabled);
 	}
 
 	
