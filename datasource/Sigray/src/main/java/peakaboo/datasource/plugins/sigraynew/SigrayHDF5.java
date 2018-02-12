@@ -11,6 +11,7 @@ import bolt.plugin.java.ClassInstantiationException;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import ch.systemsx.cisd.hdf5.hdf5lib.H5F;
 import commonenvironment.AlphaNumericComparitor;
 import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -18,9 +19,9 @@ import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import peakaboo.datasource.model.components.scandata.LoaderQueue;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
-import peakaboo.datasource.model.components.scandata.SimpleScanData.LoaderQueue;
 import peakaboo.datasource.plugin.DataSourceLoader;
 import peakaboo.ui.swing.Peakaboo;
 import scitypes.ISpectrum;
@@ -65,7 +66,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 		dataSize.setDataHeight(files.size());
 		dataSize.setDataWidth(dx);
 
-		LoaderQueue queue = new LoaderQueue(scandata, dz*2);
+		LoaderQueue queue = scandata.createLoaderQueue(dz*2);
 		
 		Comparator<String> comparitor = new AlphaNumericComparitor(); 
 		files.sort((a, b) -> comparitor.compare(a.getName(), b.getName()));
@@ -88,11 +89,10 @@ public class SigrayHDF5 extends AbstractDataSource {
 		int dy = (int) size[1];
 		int dz = (int) size[2];
 		
-				
 		float[] data1 = reader.readFloatArray("/entry/detector/data1");
+		reader.close();
 
-
-
+		
 		/*
 		 * data is stored im mca_arr in x, y, z order, but we're going through
 		 * one spectrum at a time for speed. Because we don't want to store
@@ -102,14 +102,14 @@ public class SigrayHDF5 extends AbstractDataSource {
 		for (int y = 0; y < dy; y++) { // y-axis
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis
-				Spectrum s = new ISpectrum(Arrays.copyOfRange(data1, index3(x, y, 0, dx, dy, dz), index3(x, y, dz, dx, dy, dz)));
-				//scandata.add(s);
+				Spectrum s = new ISpectrum(Arrays.copyOfRange(data1, index3(x, y, 0, dx, dy, dz), index3(x, y, dz, dx, dy, dz)), false);
 				queue.submit(s);
 			}
 			getInteraction().notifyScanRead(dx);
 		}
 
-		reader.close();
+		
+		data1 = null;
 		System.gc();
 	}
 
@@ -139,9 +139,9 @@ public class SigrayHDF5 extends AbstractDataSource {
 		return null;
 	}
 	
-//	public static void main(String[] args) throws ClassInheritanceException, ClassInstantiationException {
-//		DataSourceLoader.registerPlugin(SigrayHDF5.class);
-//		Peakaboo.main(args);
-//	}
+	public static void main(String[] args) throws ClassInheritanceException, ClassInstantiationException {
+		DataSourceLoader.registerPlugin(SigrayHDF5.class);
+		Peakaboo.main(args);
+	}
 
 }
