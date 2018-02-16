@@ -6,13 +6,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import bolt.plugin.java.ClassInheritanceException;
-import bolt.plugin.java.ClassInstantiationException;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 import ch.systemsx.cisd.hdf5.hdf5lib.H5F;
 import commonenvironment.AlphaNumericComparitor;
+import net.sciencestudio.bolt.plugin.java.ClassInheritanceException;
+import net.sciencestudio.bolt.plugin.java.ClassInstantiationException;
 import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
@@ -23,7 +23,6 @@ import peakaboo.datasource.model.components.scandata.LoaderQueue;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.plugin.DataSourceLoader;
-import peakaboo.ui.swing.Peakaboo;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
 
@@ -139,9 +138,4 @@ public class SigrayHDF5 extends AbstractDataSource {
 		return null;
 	}
 	
-	public static void main(String[] args) throws ClassInheritanceException, ClassInstantiationException {
-		DataSourceLoader.registerPlugin(SigrayHDF5.class);
-		Peakaboo.main(args);
-	}
-
 }
