@@ -21,10 +21,10 @@ import javax.swing.JToolBar;
 
 import com.ezware.dialog.task.TaskDialogs;
 
-import autodialog.model.Parameter;
-import autodialog.view.swing.editors.AbstractSwingEditor;
 import commonenvironment.Env;
 import de.sciss.syntaxpane.DefaultSyntaxKit;
+import net.sciencestudio.autodialog.model.Parameter;
+import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
 import swidget.dialogues.fileio.SwidgetIO;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;

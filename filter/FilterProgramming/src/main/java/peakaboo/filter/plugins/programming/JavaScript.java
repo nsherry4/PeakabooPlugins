@@ -1,13 +1,13 @@
 package peakaboo.filter.plugins.programming;
 
 
-import autodialog.model.Parameter;
-import autodialog.view.swing.editors.SwingEditorFactory;
-import bolt.scripting.BoltScriptExecutionException;
-import bolt.scripting.functions.BoltMap;
-import bolt.scripting.languages.JavascriptLanguage;
-import bolt.scripting.languages.Language;
 import de.sciss.syntaxpane.syntaxkits.JavaScriptSyntaxKit;
+import net.sciencestudio.autodialog.model.Parameter;
+import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
+import net.sciencestudio.bolt.scripting.BoltScriptExecutionException;
+import net.sciencestudio.bolt.scripting.functions.BoltMap;
+import net.sciencestudio.bolt.scripting.languages.JavascriptLanguage;
+import net.sciencestudio.bolt.scripting.languages.Language;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.editors.JavaScriptCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;

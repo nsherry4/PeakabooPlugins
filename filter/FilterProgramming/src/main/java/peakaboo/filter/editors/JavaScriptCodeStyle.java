@@ -1,7 +1,7 @@
 package peakaboo.filter.editors;
 
-import autodialog.model.style.CoreStyle;
-import autodialog.model.style.SimpleStyle;
+import net.sciencestudio.autodialog.model.style.CoreStyle;
+import net.sciencestudio.autodialog.model.style.SimpleStyle;
 
 public class JavaScriptCodeStyle extends SimpleStyle<String> {
 	

@@ -1,10 +1,10 @@
 package peakaboo.filter.plugins.programming;
 
 
-import autodialog.model.Parameter;
-import autodialog.view.swing.editors.SwingEditorFactory;
-import bolt.compiler.BoltJavaMap;
 import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
+import net.sciencestudio.autodialog.model.Parameter;
+import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
+import net.sciencestudio.bolt.compiler.BoltJavaMap;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.editors.JavaCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
