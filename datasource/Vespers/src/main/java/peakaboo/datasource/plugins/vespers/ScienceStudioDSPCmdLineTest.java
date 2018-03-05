@@ -22,7 +22,7 @@ public class ScienceStudioDSPCmdLineTest {
 			return;
 		}
 		
-		DataSource dataSource = new ScienceStudio();
+		DataSource dataSource = new ScienceStudioDataSource();
 		
 		List<String> filenames = Arrays.asList(args);
 		List<File> files = filenames.stream().map(File::new).collect(Collectors.toList());

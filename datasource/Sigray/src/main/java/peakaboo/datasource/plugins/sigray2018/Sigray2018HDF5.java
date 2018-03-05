@@ -1,4 +1,4 @@
-package peakaboo.datasource.plugins.sigraynew;
+package peakaboo.datasource.plugins.sigray2018;
 
 import java.io.File;
 import java.util.Arrays;
@@ -19,14 +19,14 @@ import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import peakaboo.datasource.model.components.scandata.LoaderQueue;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
+import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import peakaboo.datasource.plugin.DataSourceLoader;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
 
-public class SigrayHDF5 extends AbstractDataSource {
+public class Sigray2018HDF5 extends AbstractDataSource {
 
 	private SimpleScanData scandata;
 	private SimpleDataSize dataSize;
@@ -115,7 +115,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 	@Override
 	public FileFormat getFileFormat() {
-		return new SigrayHDF5FileFormat();
+		return new Sigray2018HDF5FileFormat();
 	}
 
 	@Override

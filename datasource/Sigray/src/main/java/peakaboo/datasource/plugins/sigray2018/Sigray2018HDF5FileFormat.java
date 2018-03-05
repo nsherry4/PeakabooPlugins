@@ -1,4 +1,4 @@
-package peakaboo.datasource.plugins.sigraynew;
+package peakaboo.datasource.plugins.sigray2018;
 
 import java.io.File;
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 
-public class SigrayHDF5FileFormat implements FileFormat {
+public class Sigray2018HDF5FileFormat implements FileFormat {
 
 	@Override
 	public List<String> getFileExtensions() {

@@ -27,7 +27,7 @@ import scitypes.Spectrum;
 import scitypes.SpectrumCalculations;
 
 
-public class CDFMLSax extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData
+public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData
 {
 
 	int											scanReadCount;
@@ -40,7 +40,7 @@ public class CDFMLSax extends AbstractDataSource implements Metadata, DataSize, 
 	
 	CDFMLReader									reader;
 
-	public CDFMLSax()
+	public CDFMLSaxDataSource()
 	{
 		
 		reader = new CDFMLReader() {

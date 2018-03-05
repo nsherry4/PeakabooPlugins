@@ -10,7 +10,7 @@ public class PeakabooTest {
 
 	public static void main(String[] args) {
 		
-		DataSource ds = new ScienceStudio();
+		DataSource ds = new ScienceStudioDataSource();
 		
 		FileFormatCompatibility compat = ds.getFileFormat().compatibility(Arrays.asList(new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006.dat"), new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006_spectra.dat")));
 		System.out.println(compat);

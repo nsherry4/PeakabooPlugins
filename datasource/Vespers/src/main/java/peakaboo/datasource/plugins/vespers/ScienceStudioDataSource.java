@@ -6,7 +6,7 @@ import peakaboo.datasource.model.components.fileformat.FileFormat;
  * @author maxweld
  *
  */
-public class ScienceStudio extends ConverterFactoryDelegatingDSP
+public class ScienceStudioDataSource extends ConverterFactoryDelegatingDSP
 {
 
 	@Override
