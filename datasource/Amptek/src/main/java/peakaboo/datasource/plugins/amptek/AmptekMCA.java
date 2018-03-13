@@ -78,6 +78,11 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	}
 
 	@Override
+	public float minEnergy() {
+		return 0;
+	}
+	
+	@Override
 	public String datasetName() {
 		return scanName;
 	}

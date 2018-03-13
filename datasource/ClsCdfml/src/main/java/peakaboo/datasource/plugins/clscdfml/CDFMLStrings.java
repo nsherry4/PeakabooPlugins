@@ -55,11 +55,13 @@ public class CDFMLStrings
 	//Old "XRF" Spectrum Data
 	public static final String	TOC_XRF					= "XRF:1.0";
 	public static final String	ATTR_XRF_MAX_ENERGY		= "XRF:MaxEnergy";
+	public static final String	ATTR_XRF_MIN_ENERGY		= "XRF:MinEnergy";
 	public static final String	VAR_XRF_SPECTRUMS		= "XRF:Spectrum";
 	
 	//new "MCA" Spectrum Data
 	public static final String 	TOC_MCA					= "MCA:1.0";
 	public static final String	ATTR_MCA_MAX_ENERGY		= "MCA:MaxEnergy";
+	public static final String	ATTR_MCA_MIN_ENERGY		= "MCA:MinEnergy";
 	public static final String	ATTR_MCA_NUM_ELEMENTS	= "MCA:NElements";
 	public static final String	VAR_MCA_DEADTIME		= "MCA:DeadTimePct";
 	public static final String	VAR_MCA_SPECTRUM		= "MCA:Spectrum";

@@ -342,6 +342,24 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		
 		return Float.parseFloat(maxEnergyValue) / 1000.0f;
 	}
+	
+	@Override
+	public float minEnergy()
+	{
+		String minEnergyValue;
+		
+		if (reader.hasAttr(CDFMLStrings.ATTR_MCA_MIN_ENERGY)) {
+			minEnergyValue = reader.getAttr(CDFMLStrings.ATTR_MCA_MIN_ENERGY, 0);
+		} else if (reader.hasAttr(CDFMLStrings.ATTR_XRF_MIN_ENERGY)) {
+			minEnergyValue = reader.getAttr(CDFMLStrings.ATTR_XRF_MIN_ENERGY, 0);
+		} else {
+			return 0f;
+		}
+		if (minEnergyValue == null) return 0f;
+		
+		return Float.parseFloat(minEnergyValue) / 1000.0f;
+	}
+
 
 
 	@Override

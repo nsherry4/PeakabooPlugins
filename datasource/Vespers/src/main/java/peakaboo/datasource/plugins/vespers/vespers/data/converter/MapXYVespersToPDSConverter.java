@@ -739,7 +739,14 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	public float maxEnergy() {
 		return maxEnergy / 1000f;
 	}
+	
+	@Override
+	public float minEnergy() {
+		return 0f; //is min energy supported in this file format?
+	}
 
+	
+	
 	@Override
 	public String datasetName() {
 		return datasetName;
