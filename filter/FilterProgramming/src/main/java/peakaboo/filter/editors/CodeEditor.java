@@ -5,11 +5,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
@@ -19,13 +20,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-import com.ezware.dialog.task.TaskDialogs;
-
 import commonenvironment.Env;
 import de.sciss.syntaxpane.DefaultSyntaxKit;
 import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
-import swidget.dialogues.fileio.SwidgetIO;
+import peakaboo.common.PeakabooLog;
+import swidget.dialogues.fileio.SimpleFileExtension;
+import swidget.dialogues.fileio.SwidgetFileDialogs;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;
 import swidget.widgets.Spacing;
@@ -92,13 +93,8 @@ public class CodeEditor extends AbstractSwingEditor<String>
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-				File file = SwidgetIO.openFile(
-						null, 
-						"Open Java Source File", 
-						new String[][]{{".java"}}, 
-						new String[]{"Java Source Files"}, 
-						Env.homeDirectory()
-					);
+				SimpleFileExtension extension = new SimpleFileExtension("Java Source Files", "java");
+				File file = SwidgetFileDialogs.openFile(null, "Open Java Source File", Env.homeDirectory(), extension);
 				if (file == null) { return; }
 				try
 				{
@@ -119,18 +115,21 @@ public class CodeEditor extends AbstractSwingEditor<String>
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
+				SimpleFileExtension extension = new SimpleFileExtension("Java Source Files", "java");
+				File file = SwidgetFileDialogs.saveFile(null, "Save Java Source File", Env.homeDirectory(), extension);
+				if (file == null) {
+					return;
+				}
+				
 				try
 				{
-					baos.write(codeEditor.getText().getBytes());
-					baos.close();
-					SwidgetIO.saveFile(null, "Save Java Source File", "java", "Java Source File", Env.homeDirectory(), baos);
+					FileOutputStream os = new FileOutputStream(file);
+					os.write(codeEditor.getText().getBytes());
+					os.close();
 				}
 				catch (IOException e1)
 				{
-					e1.printStackTrace();
-					TaskDialogs.showException(e1);
+					PeakabooLog.get().log(Level.SEVERE, "Failed to save file", e1);
 				}
 				
 			}
