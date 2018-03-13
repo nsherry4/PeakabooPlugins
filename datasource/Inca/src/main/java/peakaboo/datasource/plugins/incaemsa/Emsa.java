@@ -178,6 +178,8 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		keys.sort((a, b) -> Float.compare(a, b));
 
 		float offset = tag_offset;
+		float maxEnergy=0f;
+		float minEnergy=Float.MAX_VALUE;
 		for (float energy : keys) {
 			
 			if (offset < 0) {
@@ -186,9 +188,18 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 			}
 			
 			spectrum.add(energies.get(energy));
-			scanData.setMaxEnergy(energy);
+			
+			if (energy < minEnergy) {
+				minEnergy = energy;
+			}
+			if (energy > maxEnergy) {
+				maxEnergy = energy;
+			}
+			
 			
 		}
+		scanData.setMaxEnergy(maxEnergy);
+		scanData.setMinEnergy(minEnergy);
 		scanData.add(spectrum);
 		
 	}
