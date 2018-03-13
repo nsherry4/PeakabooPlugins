@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -450,14 +451,14 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 	}
 	
 	@Override
-	public FileFormatCompatibility compatibility(File file) {
+	public FileFormatCompatibility compatibility(Path file) {
 		return compatibility(Collections.singletonList(file));
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> files) {
+	public FileFormatCompatibility compatibility(List<Path> files) {
 		try {
-			doCanRead(files);
+			doCanRead(files.stream().map(Path::toFile).collect(Collectors.toList()));
 			return FileFormatCompatibility.MAYBE_BY_FILENAME;
 		}
 		catch(Exception e) {
@@ -466,13 +467,13 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 	}
 	
 	@Override
-	public void read(File file) throws Exception {
+	public void read(Path file) throws Exception {
 		read(Collections.singletonList(file));
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception { 
-		Converter converter = CONVERTER_FACTORY.getConverter(doCanRead(files));
+	public void read(List<Path> files) throws Exception { 
+		Converter converter = CONVERTER_FACTORY.getConverter(doCanRead(files.stream().map(Path::toFile).collect(Collectors.toList())));
 		Object dataSource =	converter.convert().get(RESPONSE_KEY_PEAKABOO_DATA_SOURCE);
 		if(dataSource instanceof DataSource) {
 			setDataSource((DataSource)dataSource);

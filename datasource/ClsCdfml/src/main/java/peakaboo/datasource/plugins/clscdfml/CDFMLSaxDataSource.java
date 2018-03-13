@@ -5,12 +5,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
+import peakaboo.common.PeakabooLog;
 import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -536,14 +539,14 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 
 	@Override
-	public FileFormatCompatibility compatibility(File file)
+	public FileFormatCompatibility compatibility(Path path)
 	{	
-		String ext = file.getAbsolutePath().toLowerCase();
+		String ext = path.toFile().getAbsolutePath().toLowerCase();
 		if (!   (ext.endsWith(".xml") || ext.endsWith(".cdfml"))  ) return FileFormatCompatibility.NO;
 		
 		try
 		{
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path.toFile())));
 			
 			int lineCount = 0;
 			String start = "", line;
@@ -563,23 +566,25 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 			}
 			
 		}
-		catch (Exception e){}
+		catch (Exception e){
+			PeakabooLog.get().log(Level.SEVERE, "Failed to read file", e);
+		}
 		
 		return FileFormatCompatibility.NO;
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> files)
+	public FileFormatCompatibility compatibility(List<Path> paths)
 	{
-		if (files.size() == 1) return compatibility(files.get(0));
+		if (paths.size() == 1) return compatibility(paths.get(0));
 		return FileFormatCompatibility.NO;
 	}
 
 	@Override
-	public void read(File file) throws Exception
+	public void read(Path file) throws Exception
 	{
 		
-		reader.read(file.getAbsolutePath(), this.getInteraction()::checkReadAborted);
+		reader.read(file.toFile().getAbsolutePath(), this.getInteraction()::checkReadAborted);
 
 		
 		//get a listing of all of the categories that this supports
@@ -591,7 +596,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception
+	public void read(List<Path> files) throws Exception
 	{
 		throw new UnsupportedOperationException();
 	}

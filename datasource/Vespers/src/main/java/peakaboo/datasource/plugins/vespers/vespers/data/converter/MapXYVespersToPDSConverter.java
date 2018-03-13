@@ -1,6 +1,7 @@
 package peakaboo.datasource.plugins.vespers.vespers.data.converter;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -698,22 +699,22 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(File file) {
+	public FileFormatCompatibility compatibility(Path file) {
 		return FileFormatCompatibility.NO;
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> files) {
+	public FileFormatCompatibility compatibility(List<Path> files) {
 		return FileFormatCompatibility.NO;
 	}
 
 	@Override
-	public void read(File file) throws Exception {
+	public void read(Path file) throws Exception {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception {
+	public void read(List<Path> files) throws Exception {
 		throw new OperationNotSupportedException();
 	}
 	

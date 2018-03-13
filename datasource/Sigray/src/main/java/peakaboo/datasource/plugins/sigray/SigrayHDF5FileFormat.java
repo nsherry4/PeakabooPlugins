@@ -1,6 +1,7 @@
 package peakaboo.datasource.plugins.sigray;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class SigrayHDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(File filename) {
+	public FileFormatCompatibility compatibility(Path path) {
 		
 		try {
-			IHDF5SimpleReader reader = HDF5Factory.openForReading(filename);
+			IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
 			HDF5DataSetInformation info = reader.getDataSetInformation("/MAPS/mca_arr");
 		} catch (Exception e) {
 			return FileFormatCompatibility.NO;
@@ -32,7 +33,7 @@ public class SigrayHDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> filenames) {
+	public FileFormatCompatibility compatibility(List<Path> filenames) {
 		return FileFormatCompatibility.NO;
 	}
 

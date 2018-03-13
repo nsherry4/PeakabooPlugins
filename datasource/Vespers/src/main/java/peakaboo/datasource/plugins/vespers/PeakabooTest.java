@@ -12,7 +12,7 @@ public class PeakabooTest {
 		
 		DataSource ds = new ScienceStudioDataSource();
 		
-		FileFormatCompatibility compat = ds.getFileFormat().compatibility(Arrays.asList(new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006.dat"), new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006_spectra.dat")));
+		FileFormatCompatibility compat = ds.getFileFormat().compatibility(Arrays.asList(new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006.dat").toPath(), new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006_spectra.dat").toPath()));
 		System.out.println(compat);
 		
 	}

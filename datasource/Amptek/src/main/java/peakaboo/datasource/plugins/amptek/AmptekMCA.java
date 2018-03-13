@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,14 +97,14 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	
 
 	@Override
-	public void read(File file) throws Exception
+	public void read(Path file) throws Exception
 	{
-		spectrum = readMCA(file.getAbsolutePath());
-		scanName = file.getName();
+		spectrum = readMCA(file.toFile().getAbsolutePath());
+		scanName = file.toFile().getName();
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception
+	public void read(List<Path> files) throws Exception
 	{
 		throw new UnsupportedOperationException();
 	}

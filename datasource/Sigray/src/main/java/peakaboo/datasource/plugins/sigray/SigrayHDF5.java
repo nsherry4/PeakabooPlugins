@@ -1,6 +1,7 @@
 package peakaboo.datasource.plugins.sigray;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,13 +46,13 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 
 	@Override
-	public void read(File file) throws Exception {
+	public void read(Path path) throws Exception {
 
-		scandata = new SimpleScanData(file.getName());
+		scandata = new SimpleScanData(path.getFileName().toString());
 
 		
 		
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(file);
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
 
 		HDF5DataSetInformation info = reader.getDataSetInformation("/MAPS/mca_arr");
 		long size[] = info.getDimensions();
@@ -123,7 +124,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception {
+	public void read(List<Path> files) throws Exception {
 		read(files.get(0));
 	}
 

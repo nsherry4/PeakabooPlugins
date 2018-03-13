@@ -1,6 +1,7 @@
 package peakaboo.datasource.plugins.sigray2018;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,32 +46,32 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(File file) throws Exception {
+	public void read(Path file) throws Exception {
 		read(Collections.singletonList(file));
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception {
-		scandata = new SimpleScanData(files.get(0).getParentFile().getName());
+	public void read(List<Path> paths) throws Exception {
+		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
 		dataSize = new SimpleDataSize();
 		
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(files.get(0));
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
 		HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		long size[] = info.getDimensions();
 		int dx = (int) size[0];
 		int dy = (int) size[1];
 		int dz = (int) size[2];
-		getInteraction().notifyScanCount(dx * dy * files.size());
+		getInteraction().notifyScanCount(dx * dy * paths.size());
 		
-		dataSize.setDataHeight(files.size());
+		dataSize.setDataHeight(paths.size());
 		dataSize.setDataWidth(dx);
 
 		LoaderQueue queue = scandata.createLoaderQueue(dz*2);
 		
 		Comparator<String> comparitor = new AlphaNumericComparitor(); 
-		files.sort((a, b) -> comparitor.compare(a.getName(), b.getName()));
-		for (File file : files) {
-			readRow(file, queue);
+		paths.sort((a, b) -> comparitor.compare(a.getFileName().toString(), b.getFileName().toString()));
+		for (Path path : paths) {
+			readRow(path, queue);
 			if (getInteraction().checkReadAborted()) {
 				queue.finish();
 				return;
@@ -80,8 +81,8 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		queue.finish();
 	}
 
-	private void readRow(File file, LoaderQueue queue) throws InterruptedException {
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(file);
+	private void readRow(Path path, LoaderQueue queue) throws InterruptedException {
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
 		HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		long size[] = info.getDimensions();
 		int dx = (int) size[0];

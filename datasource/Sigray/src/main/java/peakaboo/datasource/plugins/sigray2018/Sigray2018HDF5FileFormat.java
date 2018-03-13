@@ -1,6 +1,7 @@
 package peakaboo.datasource.plugins.sigray2018;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class Sigray2018HDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(File filename) {
+	public FileFormatCompatibility compatibility(Path filename) {
 		
 		try {
-			IHDF5SimpleReader reader = HDF5Factory.openForReading(filename);
+			IHDF5SimpleReader reader = HDF5Factory.openForReading(filename.toFile());
 			HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		} catch (Exception e) {
 			return FileFormatCompatibility.NO;
@@ -32,7 +33,7 @@ public class Sigray2018HDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> filenames) {
+	public FileFormatCompatibility compatibility(List<Path> filenames) {
 		return compatibility(filenames.get(0));
 	}
 

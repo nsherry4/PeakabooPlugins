@@ -2,6 +2,8 @@ package peakaboo.datasource.plugins.incaemsa;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,8 +49,11 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(File file) {
-		if (!file.getAbsolutePath().endsWith(".txt") && !file.getAbsolutePath().endsWith(".emsa")) return FileFormatCompatibility.NO;
+	public FileFormatCompatibility compatibility(Path file) {
+		if (
+				!file.toAbsolutePath().toString().toLowerCase().endsWith(".txt") && 
+				!file.toAbsolutePath().toString().toLowerCase().endsWith(".emsa")
+			) return FileFormatCompatibility.NO;
 		
 		try {
 			Scanner scanner = new Scanner(file);
@@ -57,14 +62,14 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 			String line = scanner.next();
 			if (!line.trim().equals("#FORMAT      : EMSA/MAS Spectral Data File")) return FileFormatCompatibility.NO;
 			return FileFormatCompatibility.YES_BY_CONTENTS;
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			return FileFormatCompatibility.NO;
 		}
 			
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<File> files) {
+	public FileFormatCompatibility compatibility(List<Path> files) {
 		if (files.size() == 0) return FileFormatCompatibility.NO;
 		return compatibility(files.get(0));
 	}
@@ -116,11 +121,11 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 	
 	@Override
-	public void read(File file) throws Exception {
+	public void read(Path file) throws Exception {
 		
 		scanData = new SimpleScanData(getFormatName());
 		
-		readTags(file.getAbsolutePath());
+		readTags(file.toAbsolutePath().toString());
 		
 		Map<Float, Float> energies = new HashMap<>();
 		Scanner scanner = new Scanner(file);
@@ -189,8 +194,8 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public void read(List<File> files) throws Exception {
-		for (File file : files) {
+	public void read(List<Path> files) throws Exception {
+		for (Path file : files) {
 			read(file);
 		}
 	}
