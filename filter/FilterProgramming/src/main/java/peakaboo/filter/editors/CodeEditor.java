@@ -26,7 +26,6 @@ import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
 import peakaboo.common.PeakabooLog;
 import swidget.dialogues.fileio.SimpleFileExtension;
-import swidget.dialogues.fileio.SwidgetFileDialogs;
 import swidget.dialogues.fileio.SwidgetFilePanels;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;
