@@ -27,6 +27,7 @@ import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
 import peakaboo.common.PeakabooLog;
 import swidget.dialogues.fileio.SimpleFileExtension;
 import swidget.dialogues.fileio.SwidgetFileDialogs;
+import swidget.dialogues.fileio.SwidgetFilePanels;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;
 import swidget.widgets.Spacing;
@@ -88,17 +89,13 @@ public class CodeEditor extends AbstractSwingEditor<String>
         toolbar.add(Box.createHorizontalGlue());
         toolbar.add(apply);
         
-        open.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent event)
-			{
-				SimpleFileExtension extension = new SimpleFileExtension("Java Source Files", "java");
-				File file = SwidgetFileDialogs.openFile(null, "Open Java Source File", Env.homeDirectory(), extension);
-				if (file == null) { return; }
+        open.addActionListener(event -> {
+			SimpleFileExtension extension = new SimpleFileExtension("Java Source Files", "java");
+			SwidgetFilePanels.openFile(null, "Open Java Source File", Env.homeDirectory(), extension, file -> {
+				if (!file.isPresent()) { return; }
 				try
 				{
-					Scanner s = new Scanner(new FileInputStream(file)).useDelimiter("\\A");
+					Scanner s = new Scanner(new FileInputStream(file.get())).useDelimiter("\\A");
 					String code = s.next();
 					s.close();
 					codeEditor.setText(code);
@@ -107,7 +104,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
 				{
 					e.printStackTrace();
 				}
-			}
+			});
 		});
         
         save.addActionListener(new ActionListener() {
@@ -116,21 +113,21 @@ public class CodeEditor extends AbstractSwingEditor<String>
 			public void actionPerformed(ActionEvent e)
 			{
 				SimpleFileExtension extension = new SimpleFileExtension("Java Source Files", "java");
-				File file = SwidgetFileDialogs.saveFile(null, "Save Java Source File", Env.homeDirectory(), extension);
-				if (file == null) {
-					return;
-				}
-				
-				try
-				{
-					FileOutputStream os = new FileOutputStream(file);
-					os.write(codeEditor.getText().getBytes());
-					os.close();
-				}
-				catch (IOException e1)
-				{
-					PeakabooLog.get().log(Level.SEVERE, "Failed to save file", e1);
-				}
+				SwidgetFilePanels.saveFile(null, "Save Java Source File", Env.homeDirectory(), extension, file -> {
+					if (!file.isPresent()) {
+						return;
+					}
+					try
+					{
+						FileOutputStream os = new FileOutputStream(file.get());
+						os.write(codeEditor.getText().getBytes());
+						os.close();
+					}
+					catch (IOException e1)
+					{
+						PeakabooLog.get().log(Level.SEVERE, "Failed to save file", e1);
+					}
+				});
 				
 			}
 		});
