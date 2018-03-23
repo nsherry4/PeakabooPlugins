@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 
-import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
@@ -20,6 +20,7 @@ import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
+import peakaboo.datasource.plugin.AbstractDataSource;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
 
@@ -162,12 +163,12 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 			tag_offset = Float.parseFloat(tags.get("OFFSET"));
 		}
 		
-		//translation of all channels
+		//translation of all channelCount
 		if (tags.containsKey("CHOFFSET")) {
 			tag_choffset = Float.parseFloat(tags.get("CHOFFSET"));
 		}
 		
-		//number of channels
+		//number of channelCount
 		if (tags.containsKey("NPOINTS")) {
 			tag_npoints = (int)Float.parseFloat(tags.get("NPOINTS"));
 		}
@@ -223,19 +224,19 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 
 	@Override
-	public Metadata getMetadata() {
-		return null;
+	public Optional<Metadata> getMetadata() {
+		return Optional.empty();
 	}
 	
 	@Override
-	public DataSize getDataSize() {
-		return null;
+	public Optional<DataSize> getDataSize() {
+		return Optional.empty();
 	}
 
 
 	@Override
-	public PhysicalSize getPhysicalSize() {
-		return null;
+	public Optional<PhysicalSize> getPhysicalSize() {
+		return Optional.empty();
 	}
 
 

@@ -4,10 +4,14 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import peakaboo.datasource.model.DataSource;
+import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
+import peakaboo.datasource.model.components.metadata.Metadata;
+import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import scitypes.ReadOnlySpectrum;
 
 /**
@@ -37,20 +41,36 @@ public class ScienceStudioDSPCmdLineTest {
 			System.out.println("Cannot Read: " + filenames);
 		}
 		
+		
+		Optional<Metadata> optMetadata = dataSource.getMetadata();
+		Optional<DataSize> optDatasize = dataSource.getDataSize();
+		Optional<PhysicalSize> optPhysical = dataSource.getPhysicalSize();
+		
 		System.out.println("DatasetName: " +  dataSource.getScanData().datasetName());
-		System.out.println("Creator: " + dataSource.getMetadata().getCreator());
-		System.out.println("CreationTime: " + dataSource.getMetadata().getCreationTime());
-		System.out.println("StartTime: " + dataSource.getMetadata().getStartTime());
-		System.out.println("EndTime: " + dataSource.getMetadata().getEndTime());
+		if (optMetadata.isPresent()) {
+			System.out.println("Creator: " + optMetadata.get().getCreator());
+			System.out.println("CreationTime: " + optMetadata.get().getCreationTime());
+			System.out.println("StartTime: " + optMetadata.get().getStartTime());
+			System.out.println("EndTime: " + optMetadata.get().getEndTime());
+		}
 		
 		System.out.println("Scan Count: " + dataSource.getScanData().scanCount());
-		System.out.println("Data Dimensions: " + dataSource.getDataSize().getDataDimensions());
-		System.out.println("Real Dimensions: " + dataSource.getPhysicalSize().getPhysicalDimensions());
+		if (optDatasize.isPresent()) {
+			System.out.println("Data Dimensions: " + optDatasize.get().getDataDimensions());
+		}
+		
+		if (optPhysical.isPresent()) {
+			System.out.println("Real Dimensions: " + optPhysical.get().getPhysicalDimensions());
+		}
 	
 		for(int idx=0; (idx<dataSource.getScanData().scanCount()) && (idx<100); idx++) {
 			System.out.print(dataSource.getScanData().scanName(idx) + ": ");
-			System.out.print(dataSource.getDataSize().getDataCoordinatesAtIndex(idx) + ": ");
-			System.out.print(dataSource.getPhysicalSize().getPhysicalCoordinatesAtIndex(idx) + ": ");
+			if (optDatasize.isPresent()) {
+				System.out.print(optDatasize.get().getDataCoordinatesAtIndex(idx) + ": ");
+			}
+			if (optPhysical.isPresent()) {
+				System.out.print(optPhysical.get().getPhysicalCoordinatesAtIndex(idx) + ": ");
+			}
 			System.out.print(spectrumToString(dataSource.getScanData().get(idx), 20));
 			System.out.println();
 		}

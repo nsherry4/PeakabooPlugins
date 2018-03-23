@@ -10,15 +10,16 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
+import peakaboo.datasource.plugin.AbstractDataSource;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
 import scitypes.util.StringInput;
@@ -123,19 +124,19 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	
 
 	@Override
-	public DataSize getDataSize() {
-		return null;
+	public Optional<DataSize> getDataSize() {
+		return Optional.empty();
 	}
 
 	
 	@Override
-	public Metadata getMetadata() {
-		return null;
+	public Optional<Metadata> getMetadata() {
+		return Optional.empty();
 	}
 
 	@Override
-	public PhysicalSize getPhysicalSize() {
-		return null;
+	public Optional<PhysicalSize> getPhysicalSize() {
+		return Optional.empty();
 	}
 
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -676,19 +677,23 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	// DataSource //
 	
 	@Override
-	public Metadata getMetadata() {
-		return this;
+	public Optional<Metadata> getMetadata() {
+		return Optional.of(this);
 	}
 	
 
-	@Override
-	public boolean hasDataSize() {
+	
+	private boolean hasDataSize() {
 		return (hasStartX && hasStartY && hasEndX && hasEndY);
 	}
 
 	@Override
-	public DataSize getDataSize() {
-		return this;
+	public Optional<DataSize> getDataSize() {
+		if (hasDataSize()) {
+			return Optional.of(this);
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	
@@ -859,8 +864,8 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	}
 
 	@Override
-	public PhysicalSize getPhysicalSize() {
-		return this;
+	public Optional<PhysicalSize> getPhysicalSize() {
+		return Optional.of(this);
 	}
 
 

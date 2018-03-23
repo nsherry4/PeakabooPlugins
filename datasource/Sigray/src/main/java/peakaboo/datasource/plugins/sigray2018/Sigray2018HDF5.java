@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
@@ -14,7 +15,6 @@ import ch.systemsx.cisd.hdf5.hdf5lib.H5F;
 import commonenvironment.AlphaNumericComparitor;
 import net.sciencestudio.bolt.plugin.java.ClassInheritanceException;
 import net.sciencestudio.bolt.plugin.java.ClassInstantiationException;
-import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -23,6 +23,7 @@ import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
+import peakaboo.datasource.plugin.AbstractDataSource;
 import peakaboo.datasource.plugin.DataSourceLoader;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
@@ -125,18 +126,19 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 	}
 
 	@Override
-	public PhysicalSize getPhysicalSize() {
-		return null;
+	public Optional<PhysicalSize> getPhysicalSize() {
+		return Optional.empty();
 	}
 
 	@Override
-	public DataSize getDataSize() {
-		return dataSize;
+	public Optional<DataSize> getDataSize() {
+		return Optional.of(dataSize);
 	}
 	
+	
 	@Override
-	public Metadata getMetadata() {
-		return null;
+	public Optional<Metadata> getMetadata() {
+		return Optional.empty();
 	}
 	
 }

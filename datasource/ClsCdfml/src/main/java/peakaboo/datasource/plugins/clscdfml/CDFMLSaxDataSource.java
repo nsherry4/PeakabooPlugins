@@ -10,17 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
 import peakaboo.common.PeakabooLog;
-import peakaboo.datasource.model.AbstractDataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
+import peakaboo.datasource.plugin.AbstractDataSource;
 import scitypes.Bounds;
 import scitypes.Coord;
 import scitypes.ISpectrum;
@@ -418,8 +419,8 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	
 
 	@Override
-	public Metadata getMetadata() {
-		return this;
+	public Optional<Metadata> getMetadata() {
+		return Optional.of(this);
 	}
 
 
@@ -652,13 +653,13 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 
 	@Override
-	public DataSize getDataSize() {
-		return this;
+	public Optional<DataSize> getDataSize() {
+		return Optional.of(this);
 	}
 
 	@Override
-	public PhysicalSize getPhysicalSize() {
-		return this;
+	public Optional<PhysicalSize> getPhysicalSize() {
+		return Optional.of(this);
 	}
 
 	@Override
