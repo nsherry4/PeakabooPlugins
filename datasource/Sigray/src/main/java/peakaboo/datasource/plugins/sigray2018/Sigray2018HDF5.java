@@ -13,6 +13,7 @@ import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 import ch.systemsx.cisd.hdf5.hdf5lib.H5F;
 import commonenvironment.AlphaNumericComparitor;
+import net.sciencestudio.autodialog.model.Group;
 import net.sciencestudio.bolt.plugin.java.ClassInheritanceException;
 import net.sciencestudio.bolt.plugin.java.ClassInstantiationException;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -138,6 +139,11 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 	
 	@Override
 	public Optional<Metadata> getMetadata() {
+		return Optional.empty();
+	}
+	
+	@Override
+	public Optional<Group> getParameters() {
 		return Optional.empty();
 	}
 	

@@ -9,6 +9,7 @@ import java.util.Optional;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -155,6 +156,11 @@ public class SigrayHDF5 extends AbstractDataSource {
 	public Optional<PhysicalSize> getPhysicalSize() {
 		return Optional.of(physicalSize);
 	}
+	
+	@Override
+	public Optional<Group> getParameters() {
+		return Optional.empty();
+	}
 
 }
 
@@ -192,6 +198,7 @@ class SigrayHDF5Dimensions implements PhysicalSize {
 	public SISize getPhysicalUnit() {
 		return units;
 	}
+
 
 
 

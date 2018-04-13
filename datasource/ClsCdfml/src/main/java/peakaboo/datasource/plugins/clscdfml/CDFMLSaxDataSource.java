@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
+import net.sciencestudio.autodialog.model.Group;
 import peakaboo.common.PeakabooLog;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -668,7 +669,10 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 
-
+	@Override
+	public Optional<Group> getParameters() {
+		return Optional.empty();
+	}
 	
 
 

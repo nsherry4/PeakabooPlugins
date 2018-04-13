@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
+import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
@@ -240,7 +241,10 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 
-
+	@Override
+	public Optional<Group> getParameters() {
+		return Optional.empty();
+	}
 
 
 

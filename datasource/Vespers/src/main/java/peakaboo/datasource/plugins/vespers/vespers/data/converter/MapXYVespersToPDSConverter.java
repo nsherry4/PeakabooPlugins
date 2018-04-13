@@ -16,6 +16,7 @@ import ca.sciencestudio.data.daf.DAFSpectrumParser;
 import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.vespers.data.converter.AbstractMapXYVespersConverter;
+import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.DataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -868,6 +869,10 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 		return Optional.of(this);
 	}
 
+	@Override
+	public Optional<Group> getParameters() {
+		return Optional.empty();
+	}
 
 
 	// Others DSMetadata methods implemented by super-class //
