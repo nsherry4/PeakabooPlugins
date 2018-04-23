@@ -13,6 +13,7 @@ import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
 import peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5DataSource;
 import scitypes.Coord;
+import scitypes.SISize;
 
 public class APSSector20 extends SimpleHDF5DataSource {
 
@@ -76,7 +77,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 		float[] ypos = reader.readFloatArray("/2D Scan/Y Positions");
 		float[] xpos = reader.readFloatArray("/2D Scan/X Positions");
 		
-		physical = new SimplePhysicalSize();
+		physical = new SimplePhysicalSize(null);
 		
 		int index = 0;
 		for (int y = 0; y < ypos.length; y++) {
