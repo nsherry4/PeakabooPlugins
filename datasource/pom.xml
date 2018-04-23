@@ -10,6 +10,8 @@
   <url>http://maven.apache.org</url>
   
   <modules>
+    <module>GenericHDF5</module>
+    <module>APSSector20</module>
     <module>Amptek</module>
     <module>ClsCdfml</module>
     <module>Inca</module>
