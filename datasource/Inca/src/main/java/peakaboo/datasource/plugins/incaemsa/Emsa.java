@@ -50,7 +50,6 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		return Arrays.asList("txt", "emsa");
 	}
 
-	@Override
 	public FileFormatCompatibility compatibility(Path file) {
 		if (
 				!file.toAbsolutePath().toString().toLowerCase().endsWith(".txt") && 

@@ -18,12 +18,11 @@ public class Sigray2018HDF5FileFormat implements FileFormat {
 		return Arrays.asList("h5", "hdf5");
 	}
 
-	@Override
 	public FileFormatCompatibility compatibility(Path filename) {
 		
 		try {
 			IHDF5SimpleReader reader = HDF5Factory.openForReading(filename.toFile());
-			HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
+			reader.getDataSetInformation("/entry/detector/data1");
 		} catch (Exception e) {
 			return FileFormatCompatibility.NO;
 		}

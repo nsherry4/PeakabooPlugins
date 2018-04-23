@@ -704,10 +704,6 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 		return Collections.emptyList();
 	}
 
-	@Override
-	public FileFormatCompatibility compatibility(Path file) {
-		return FileFormatCompatibility.NO;
-	}
 
 	@Override
 	public FileFormatCompatibility compatibility(List<Path> files) {

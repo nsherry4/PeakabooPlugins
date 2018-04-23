@@ -558,7 +558,6 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	//==============================================
 
 
-	@Override
 	public FileFormatCompatibility compatibility(Path path)
 	{	
 		String ext = path.toFile().getAbsolutePath().toLowerCase();
@@ -596,8 +595,12 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	@Override
 	public FileFormatCompatibility compatibility(List<Path> paths)
 	{
-		if (paths.size() == 1) return compatibility(paths.get(0));
-		return FileFormatCompatibility.NO;
+		if (paths.size() != 1) {
+			return FileFormatCompatibility.NO;
+		}
+		
+		return compatibility(paths.get(0));
+		
 	}
 
 	public void read(Path file) throws Exception

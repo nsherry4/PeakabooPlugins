@@ -451,11 +451,6 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 	}
 	
 	@Override
-	public FileFormatCompatibility compatibility(Path file) {
-		return compatibility(Collections.singletonList(file));
-	}
-
-	@Override
 	public FileFormatCompatibility compatibility(List<Path> files) {
 		try {
 			doCanRead(files.stream().map(Path::toFile).collect(Collectors.toList()));

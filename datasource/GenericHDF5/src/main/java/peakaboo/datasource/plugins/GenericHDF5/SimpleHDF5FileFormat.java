@@ -24,7 +24,6 @@ public class SimpleHDF5FileFormat implements FileFormat {
 		return Arrays.asList(new String[] {"h5", "hdf5"});
 	}
 
-	@Override
 	public FileFormatCompatibility compatibility(Path path) {
 		try (IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile())) {
 			reader.getDataSetInformation(dataPath);

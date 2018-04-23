@@ -18,7 +18,6 @@ public class SigrayHDF5FileFormat implements FileFormat {
 		return Arrays.asList("h5", "hdf5");
 	}
 
-	@Override
 	public FileFormatCompatibility compatibility(Path path) {
 		
 		try {
@@ -33,8 +32,12 @@ public class SigrayHDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> filenames) {
-		return FileFormatCompatibility.NO;
+	public FileFormatCompatibility compatibility(List<Path> paths) {
+		if (paths.size() != 1) {
+			return FileFormatCompatibility.NO;
+		}
+		
+		return compatibility(paths.get(0));
 	}
 
 	@Override
