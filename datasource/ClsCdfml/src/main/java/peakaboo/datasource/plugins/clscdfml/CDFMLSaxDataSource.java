@@ -600,7 +600,6 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		return FileFormatCompatibility.NO;
 	}
 
-	@Override
 	public void read(Path file) throws Exception
 	{
 		
@@ -618,7 +617,11 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	@Override
 	public void read(List<Path> files) throws Exception
 	{
-		throw new UnsupportedOperationException();
+		if (files == null) throw new UnsupportedOperationException();
+		if (files.size() == 0) throw new UnsupportedOperationException();
+		if (files.size() > 1) throw new UnsupportedOperationException();
+		
+		read(files.get(0));
 	}
 
 	@Override
@@ -670,7 +673,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 
 	@Override
-	public Optional<Group> getParameters() {
+	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
 	}
 	

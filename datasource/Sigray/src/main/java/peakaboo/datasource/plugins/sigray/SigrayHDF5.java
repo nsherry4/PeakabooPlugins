@@ -46,7 +46,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 	// private Integer file_id = null;
 
 
-	@Override
+	
 	public void read(Path path) throws Exception {
 
 		scandata = new SimpleScanData(path.getFileName().toString());
@@ -158,9 +158,10 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters() {
+	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
 	}
+
 
 }
 

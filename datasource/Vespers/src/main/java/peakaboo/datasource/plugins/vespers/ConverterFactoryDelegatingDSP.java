@@ -466,10 +466,6 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 		}
 	}
 	
-	@Override
-	public void read(Path file) throws Exception {
-		read(Collections.singletonList(file));
-	}
 
 	@Override
 	public void read(List<Path> files) throws Exception { 

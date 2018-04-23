@@ -714,10 +714,6 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 		return FileFormatCompatibility.NO;
 	}
 
-	@Override
-	public void read(Path file) throws Exception {
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	public void read(List<Path> files) throws Exception {
@@ -870,9 +866,10 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	}
 
 	@Override
-	public Optional<Group> getParameters() {
+	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
 	}
+
 
 
 	// Others DSMetadata methods implemented by super-class //

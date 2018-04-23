@@ -47,10 +47,6 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		return z + y*dz + x*dz*dy;
 	}
 
-	@Override
-	public void read(Path file) throws Exception {
-		read(Collections.singletonList(file));
-	}
 
 	@Override
 	public void read(List<Path> paths) throws Exception {
@@ -143,8 +139,9 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters() {
+	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
 	}
+
 	
 }
