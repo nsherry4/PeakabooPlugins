@@ -57,6 +57,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 		return index % calcScanWidth(info);
 	}
 	
+	@Override
 	protected float[] readSpectralData(Path path) {
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
 		float[] mca1 = reader.readFloatArray("/2D Scan/MCA 1");
