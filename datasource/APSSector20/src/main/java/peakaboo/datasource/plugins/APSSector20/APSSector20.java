@@ -77,7 +77,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 		float[] ypos = reader.readFloatArray("/2D Scan/Y Positions");
 		float[] xpos = reader.readFloatArray("/2D Scan/X Positions");
 		
-		physical = new SimplePhysicalSize(null);
+		physical = new SimplePhysicalSize(SISize.um);
 		
 		int index = 0;
 		for (int y = 0; y < ypos.length; y++) {
