@@ -31,10 +31,6 @@ public abstract class AbstractHDF5DataSource extends AbstractDataSource {
 		this.dataPath = dataPath;
 	}
 
-	@Override
-	public String pluginVersion() {
-		return "1.0";
-	}
 
 
 	

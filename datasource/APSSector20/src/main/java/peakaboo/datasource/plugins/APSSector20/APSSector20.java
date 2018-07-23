@@ -25,6 +25,16 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 
 	@Override
+	public String pluginVersion() {
+		return "1.0";
+	}
+	
+	@Override
+	public String pluginUUID() {
+		return "40cb5bfc-6ee3-4972-928f-f5bafd093e91";
+	}
+	
+	@Override
 	public void read(List<Path> paths) throws Exception {
 		if (paths.size() != 1) {
 			throw new UnsupportedOperationException();

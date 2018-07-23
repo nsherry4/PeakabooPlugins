@@ -40,7 +40,10 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		return "1.0";
 	}
 	
-
+	@Override
+	public String pluginUUID() {
+		return "0196935e-2902-4a89-8c06-772db437d59a";
+	}
 
 	private int index3(int x, int y, int z, int dx, int dy, int dz) {
 		//return x + y * dx + z * dx * dy;

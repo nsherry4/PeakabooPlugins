@@ -64,6 +64,10 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		return "1.0";
 	}
 	
+	@Override
+	public String pluginUUID() {
+		return "de17069d-0d04-4cb0-89a4-bf4c1a79b771";
+	}
 	
 	private boolean isNewVersion()
 	{

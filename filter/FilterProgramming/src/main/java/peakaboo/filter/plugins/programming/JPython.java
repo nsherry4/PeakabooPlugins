@@ -57,6 +57,11 @@ public class JPython extends AbstractSimpleFilter {
 	}
 	
 	@Override
+	public String pluginUUID() {
+		return "725c9b05-5fd1-45d9-8b89-3b366c91e398";
+	}
+	
+	@Override
 	public void initialize() 
 	{
 		//editor = new CodeEditor("python", new PythonSyntaxKit());

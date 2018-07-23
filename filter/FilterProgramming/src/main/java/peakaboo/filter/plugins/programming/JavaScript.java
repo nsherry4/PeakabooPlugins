@@ -62,6 +62,11 @@ public class JavaScript extends AbstractSimpleFilter {
 	}
 	
 	@Override
+	public String pluginUUID() {
+		return "003f98a3-b000-44ee-9a1d-12506f8447e4";
+	}
+	
+	@Override
 	public void initialize() 
 	{
 		code = new Parameter<>("JavaScript Code", new JavaScriptCodeStyle(), header + "spectrumOut = spectrumIn;", this::validate);

@@ -45,6 +45,11 @@ public class Java extends AbstractSimpleFilter {
 	}
 	
 	@Override
+	public String pluginUUID() {
+		return "3f8761ae-5702-46d9-8a59-446e4a70f9fa";
+	}
+	
+	@Override
 	public void initialize() {
 		code = new Parameter<>("Java Code", new JavaCodeStyle(), defaultCode, this::validate);
 		addParameter(code);

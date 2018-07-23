@@ -25,6 +25,11 @@ public class ScienceStudioDataSource extends ConverterFactoryDelegatingDSP
 	}
 	
 	@Override
+	public String pluginUUID() {
+		return "dac5aa61-d157-463d-a13d-b29f05e8d926";
+	}
+	
+	@Override
 	public String getFormatName() {
 		return "VESPERS CLS Data Acquisition Format";
 	}
