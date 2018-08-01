@@ -1,9 +1,7 @@
 package peakaboo.datasource.plugins.sigray2018;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -11,11 +9,8 @@ import java.util.Optional;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import ch.systemsx.cisd.hdf5.hdf5lib.H5F;
 import commonenvironment.AlphaNumericComparitor;
 import net.sciencestudio.autodialog.model.Group;
-import net.sciencestudio.bolt.plugin.java.ClassInheritanceException;
-import net.sciencestudio.bolt.plugin.java.ClassInstantiationException;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -25,7 +20,6 @@ import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import peakaboo.datasource.plugin.DataSourceLoader;
 import scitypes.ISpectrum;
 import scitypes.Spectrum;
 
