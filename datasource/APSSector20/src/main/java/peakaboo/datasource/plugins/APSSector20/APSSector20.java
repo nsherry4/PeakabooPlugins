@@ -26,7 +26,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.0.1";
 	}
 	
 	@Override
@@ -70,16 +70,20 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	@Override
 	protected float[] readSpectralData(Path path) {
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
-		float[] mca1 = reader.readFloatArray("/2D Scan/MCA 1");
-		float[] mca2 = reader.readFloatArray("/2D Scan/MCA 2");
-		float[] mca3 = reader.readFloatArray("/2D Scan/MCA 3");
-		float[] mca4 = reader.readFloatArray("/2D Scan/MCA 4");
-		
-		float[] scan = new float[mca1.length];
-		for (int i = 0; i < scan.length; i++) {
-			scan[i] = mca1[i] + mca2[i] + mca3[i] + mca4[i];
+		float[] scan = reader.readFloatArray("/2D Scan/MCA 1");
+
+		int block = 2;
+		while (true) {
+			String blockName = "/2D Scan/MCA " + block++;
+			if (!reader.exists(blockName)) {
+				break;
+			}
+			float[] mca = reader.readFloatArray(blockName);	
+			for (int i = 0; i < scan.length; i++) {
+				scan[i] += mca[i];
+			}
 		}
-		
+	
 		return scan;
 	}
 	
