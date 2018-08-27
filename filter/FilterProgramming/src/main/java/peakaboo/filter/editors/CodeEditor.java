@@ -20,10 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-import commonenvironment.Env;
 import de.sciss.syntaxpane.DefaultSyntaxKit;
 import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
+import peakaboo.common.Env;
 import peakaboo.common.PeakabooLog;
 import swidget.dialogues.fileio.SimpleFileExtension;
 import swidget.dialogues.fileio.SwidgetFilePanels;
