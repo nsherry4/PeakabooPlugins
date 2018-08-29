@@ -41,7 +41,12 @@ public class Java extends AbstractSimpleFilter {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
+	}
+	
+	@Override
+	public String pluginUUID() {
+		return "3f8761ae-5702-46d9-8a59-446e4a70f9fa";
 	}
 	
 	@Override

@@ -38,7 +38,12 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
+	}
+	
+	@Override
+	public String pluginUUID() {
+		return "fe4f9def-9cf9-46b8-b460-bbde62a6f144";
 	}
 	
 	private Spectrum readMCA(String filename) throws IOException

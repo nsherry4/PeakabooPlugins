@@ -20,10 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-import commonenvironment.Env;
 import de.sciss.syntaxpane.DefaultSyntaxKit;
 import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
+import peakaboo.common.Env;
 import peakaboo.common.PeakabooLog;
 import swidget.dialogues.fileio.SimpleFileExtension;
 import swidget.dialogues.fileio.SwidgetFilePanels;
@@ -79,9 +79,9 @@ public class CodeEditor extends AbstractSwingEditor<String>
         toolbar.setOpaque(false);
         toolbar.setBorder(Spacing.bNone());
         
-        ToolbarImageButton open = new ToolbarImageButton(StockIcon.DOCUMENT_OPEN, "Open");
-        ToolbarImageButton save = new ToolbarImageButton(StockIcon.DOCUMENT_SAVE_AS, "Save");
-        ToolbarImageButton apply = new ToolbarImageButton(StockIcon.CHOOSE_OK, "Apply", "Apply any code changes to the filter", true);
+        ToolbarImageButton open = new ToolbarImageButton("Open", StockIcon.DOCUMENT_OPEN);
+        ToolbarImageButton save = new ToolbarImageButton("Save", StockIcon.DOCUMENT_SAVE_AS);
+        ToolbarImageButton apply = new ToolbarImageButton("Apply", StockIcon.CHOOSE_OK).withTooltip("Apply any code changes to the filter").withSignificance(true);
         
         toolbar.add(open);
         toolbar.add(save);

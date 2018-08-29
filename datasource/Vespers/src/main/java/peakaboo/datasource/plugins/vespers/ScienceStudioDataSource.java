@@ -21,7 +21,12 @@ public class ScienceStudioDataSource extends ConverterFactoryDelegatingDSP
 	
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
+	}
+	
+	@Override
+	public String pluginUUID() {
+		return "dac5aa61-d157-463d-a13d-b29f05e8d926";
 	}
 	
 	@Override

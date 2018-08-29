@@ -38,9 +38,13 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
 	}
 	
+	@Override
+	public String pluginUUID() {
+		return "f5af3f37-9c96-41c9-87cf-7042d7e299f4";
+	}
 	
 	/******************************
 	 * DataSourceFileFormat
