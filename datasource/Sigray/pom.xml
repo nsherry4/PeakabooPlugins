@@ -23,9 +23,8 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sciencestudio.peakaboo</groupId>
-			<artifactId>PeakabooSDK</artifactId>
-			<version>5.0-SNAPSHOT</version>
-			<scope>provided</scope>
+			<artifactId>libpeakaboo</artifactId>
+			<version>5-SNAPSHOT</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.systemsx.cisd/sis-jhdf5-batteries_included -->
 		<dependency>
