@@ -69,11 +69,6 @@ public class APSSector20 extends SimpleHDF5DataSource {
 		return dataSize;
 	}
 
-	@Override
-	protected int getScanWidth(HDF5DataSetInformation info) {
-		return (int) info.getDimensions()[2];
-	}
-
 	
 	@Override
 	protected void readFile(Path path, int filenum) throws InterruptedException {

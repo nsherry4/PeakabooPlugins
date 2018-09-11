@@ -102,6 +102,5 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	
 	protected abstract void readFile(Path path, int filenum) throws Exception;
 	protected abstract DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo);
-	protected abstract int getScanWidth(HDF5DataSetInformation datasetInfo);
 
 }
