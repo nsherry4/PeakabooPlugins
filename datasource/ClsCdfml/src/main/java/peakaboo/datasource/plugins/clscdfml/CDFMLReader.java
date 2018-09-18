@@ -18,7 +18,7 @@ import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import peakaboo.common.Version;
-import peakaboo.datasource.model.SpectrumList;
+import peakaboo.datasource.model.PeakabooLists;
 import scitypes.ISpectrum;
 import scitypes.Pair;
 import scitypes.Range;
@@ -353,7 +353,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 				
 				List<Spectrum> svalues = (List<Spectrum>)variableEntries.get(variableName);
 				if (svalues == null) {
-					svalues = SpectrumList.create(Version.program_name + " - CDFML - " + variableName);
+					svalues = PeakabooLists.create();
 					variableEntries.put(variableName, svalues);
 				}
 				svalues.set(entryNo, getSpectrumFromString(dimSize, sb.toString()));
