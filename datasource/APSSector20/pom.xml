@@ -50,6 +50,7 @@
 			<!-- Build jar with dependencies bundled -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<outputDirectory>${project.basedir}/../../Plugins/</outputDirectory>
 					<finalName>${project.artifactId}-${project.version}</finalName>
