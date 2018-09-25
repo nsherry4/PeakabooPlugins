@@ -17,13 +17,13 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import cyclops.ISpectrum;
+import cyclops.Pair;
+import cyclops.Range;
+import cyclops.SparsedList;
+import cyclops.Spectrum;
 import peakaboo.common.Version;
 import peakaboo.datasource.model.PeakabooLists;
-import scitypes.ISpectrum;
-import scitypes.Pair;
-import scitypes.Range;
-import scitypes.SparsedList;
-import scitypes.Spectrum;
 
 
 public abstract class CDFMLReader extends DefaultHandler2

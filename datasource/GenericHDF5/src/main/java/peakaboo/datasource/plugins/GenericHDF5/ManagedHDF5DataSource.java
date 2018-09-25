@@ -8,8 +8,8 @@ import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import scitypes.ISpectrum;
-import scitypes.Spectrum;
+import cyclops.ISpectrum;
+import cyclops.Spectrum;
 
 public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 

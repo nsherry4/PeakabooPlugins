@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import cyclops.ISpectrum;
+import cyclops.Spectrum;
+import cyclops.util.StringInput;
 import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -21,9 +24,6 @@ import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.ISpectrum;
-import scitypes.Spectrum;
-import scitypes.util.StringInput;
 
 
 public class AmptekMCA extends AbstractDataSource implements ScanData {

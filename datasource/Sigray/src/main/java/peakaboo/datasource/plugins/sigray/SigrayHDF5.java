@@ -9,6 +9,11 @@ import java.util.Optional;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import cyclops.Bounds;
+import cyclops.Coord;
+import cyclops.ISpectrum;
+import cyclops.SISize;
+import cyclops.Spectrum;
 import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
@@ -19,11 +24,6 @@ import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.Bounds;
-import scitypes.Coord;
-import scitypes.ISpectrum;
-import scitypes.SISize;
-import scitypes.Spectrum;
 
 public class SigrayHDF5 extends AbstractDataSource {
 

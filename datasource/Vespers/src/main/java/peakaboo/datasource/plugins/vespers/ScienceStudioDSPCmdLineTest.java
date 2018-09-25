@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import cyclops.ReadOnlySpectrum;
 import peakaboo.datasource.model.DataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import scitypes.ReadOnlySpectrum;
 
 /**
  * @author maxweld

@@ -9,6 +9,8 @@ import java.util.Optional;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import cyclops.ISpectrum;
+import cyclops.Spectrum;
 import net.sciencestudio.autodialog.model.Group;
 import net.sciencestudio.bolt.plugin.core.AlphaNumericComparitor;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -20,8 +22,6 @@ import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.ISpectrum;
-import scitypes.Spectrum;
 
 public class Sigray2018HDF5 extends AbstractDataSource {
 

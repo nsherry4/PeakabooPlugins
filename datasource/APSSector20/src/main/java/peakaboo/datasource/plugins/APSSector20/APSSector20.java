@@ -17,6 +17,9 @@ import ch.systemsx.cisd.hdf5.HDF5MDDataBlock;
 import ch.systemsx.cisd.hdf5.IHDF5FloatReader;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import cyclops.Coord;
+import cyclops.ISpectrum;
+import cyclops.SISize;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
@@ -24,9 +27,6 @@ import peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5DataSource;
-import scitypes.Coord;
-import scitypes.ISpectrum;
-import scitypes.SISize;
 
 public class APSSector20 extends SimpleHDF5DataSource {
 

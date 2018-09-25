@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
+import cyclops.ISpectrum;
+import cyclops.Spectrum;
 import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.components.datasize.DataSize;
 import peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -22,8 +24,6 @@ import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.ISpectrum;
-import scitypes.Spectrum;
 
 public class Emsa extends AbstractDataSource implements FileFormat {
 

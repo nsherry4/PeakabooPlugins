@@ -14,6 +14,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
+import cyclops.Bounds;
+import cyclops.Coord;
+import cyclops.ISpectrum;
+import cyclops.Range;
+import cyclops.SISize;
+import cyclops.Spectrum;
+import cyclops.SpectrumCalculations;
 import net.sciencestudio.autodialog.model.Group;
 import peakaboo.common.PeakabooLog;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -23,13 +30,6 @@ import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.Bounds;
-import scitypes.Coord;
-import scitypes.ISpectrum;
-import scitypes.Range;
-import scitypes.SISize;
-import scitypes.Spectrum;
-import scitypes.SpectrumCalculations;
 
 
 public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData

@@ -16,6 +16,11 @@ import ca.sciencestudio.data.daf.DAFSpectrumParser;
 import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.vespers.data.converter.AbstractMapXYVespersConverter;
+import cyclops.Bounds;
+import cyclops.Coord;
+import cyclops.ISpectrum;
+import cyclops.SISize;
+import cyclops.Spectrum;
 import net.sciencestudio.autodialog.model.Group;
 import peakaboo.datasource.model.DataSource;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -27,11 +32,6 @@ import peakaboo.datasource.model.components.metadata.Metadata;
 import peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.plugins.vespers.ConverterFactoryDelegatingDSP;
-import scitypes.Bounds;
-import scitypes.Coord;
-import scitypes.ISpectrum;
-import scitypes.SISize;
-import scitypes.Spectrum;
 
 /**
  * 
