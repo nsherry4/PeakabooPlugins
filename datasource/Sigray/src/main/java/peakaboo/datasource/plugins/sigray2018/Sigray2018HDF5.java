@@ -47,7 +47,13 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 
 	@Override
 	public void read(List<Path> paths) throws Exception {
-		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
+		String title = "";
+		if (paths.size() == 1) {
+			title = paths.get(0).getFileName().toString();
+		} else {
+			title = paths.get(0).getParent().getFileName().toString();
+		}
+		scandata = new SimpleScanData(title);
 		dataSize = new SimpleDataSize();
 		
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
