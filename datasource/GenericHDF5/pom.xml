@@ -32,6 +32,7 @@
 			<groupId>net.sciencestudio.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
 			<version>5-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
