@@ -30,7 +30,7 @@ import swidget.dialogues.fileio.SwidgetFilePanels;
 import swidget.icons.IconSize;
 import swidget.icons.StockIcon;
 import swidget.widgets.Spacing;
-import swidget.widgets.ToolbarImageButton;
+import swidget.widgets.buttons.ToolbarImageButton;
 
 public class CodeEditor extends AbstractSwingEditor<String>
 {
