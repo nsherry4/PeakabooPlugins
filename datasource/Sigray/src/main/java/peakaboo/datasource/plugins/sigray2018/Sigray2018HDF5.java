@@ -94,12 +94,6 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		reader.close();
 
 		
-		/*
-		 * data is stored im mca_arr in x, y, z order, but we're going through
-		 * one spectrum at a time for speed. Because we don't want to store
-		 * everything in memory, we're using a special kind of list which writes
-		 * compressed data to disk.
-		 */
 		for (int y = 0; y < dy; y++) { // y-axis
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis
