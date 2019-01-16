@@ -1,12 +1,11 @@
 package peakaboo.filter.editors;
 
-import net.sciencestudio.autodialog.model.style.CoreStyle;
-import net.sciencestudio.autodialog.model.style.SimpleStyle;
+import java.util.HashMap;
 
-public class JavaCodeStyle extends SimpleStyle<String> {
+public class JavaCodeStyle extends CodeStyle {
 	
 	public JavaCodeStyle() {
-		super("java-code-editor", CoreStyle.TEXT_AREA);
+		super("java-code-editor");
 	}
 	
 }

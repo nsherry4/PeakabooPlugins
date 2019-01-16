@@ -11,6 +11,7 @@ import net.sciencestudio.bolt.scripting.functions.BoltMap;
 import net.sciencestudio.bolt.scripting.languages.JavascriptLanguage;
 import net.sciencestudio.bolt.scripting.languages.Language;
 import peakaboo.filter.editors.CodeEditor;
+import peakaboo.filter.editors.CodeStyle;
 import peakaboo.filter.editors.JavaScriptCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import peakaboo.filter.model.FilterType;
@@ -22,9 +23,8 @@ public class JavaScript extends AbstractSimpleFilter {
 		SwingEditorFactory.registerStyleProvider("javascript-code-editor", () -> new CodeEditor("JavaScript", new JavaScriptSyntaxKit()));
 	}
 	
-	
+	CodeStyle style;
 	Parameter<String> code;
-	private CodeEditor editor;	
 	private boolean jsSupported = true;
 	
 	private static final String header = "" + 
@@ -69,7 +69,8 @@ public class JavaScript extends AbstractSimpleFilter {
 	@Override
 	public void initialize() 
 	{
-		code = new Parameter<>("JavaScript Code", new JavaScriptCodeStyle(), header + "spectrumOut = spectrumIn;", this::validate);
+		style = new JavaScriptCodeStyle();
+		code = new Parameter<>("JavaScript Code", style, header + "spectrumOut = spectrumIn;", this::validate);
 		addParameter(code);
 	}
 
@@ -97,7 +98,7 @@ public class JavaScript extends AbstractSimpleFilter {
 				throw new BoltScriptExecutionException("Type mismatch for spectrumOut");
 			}
 		} catch (Exception e) {
-			editor.errorMessage = e.getMessage();
+			style.errorMessage = e.getMessage();
 			return false;
 		}
 		

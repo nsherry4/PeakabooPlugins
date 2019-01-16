@@ -8,6 +8,7 @@ import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
 import net.sciencestudio.bolt.compiler.BoltJavaMap;
 import peakaboo.filter.editors.CodeEditor;
+import peakaboo.filter.editors.CodeStyle;
 import peakaboo.filter.editors.JavaCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import peakaboo.filter.model.FilterType;
@@ -21,8 +22,8 @@ public class Java extends AbstractSimpleFilter {
 	
 	BoltJavaMap<float[], float[]> boltJavaMap;
 	
+	private CodeStyle style;
 	private Parameter<String> code;
-	private CodeEditor editor;
 	
 	private static final String defaultBoltFunction = "" + 
 		"return JavaFilter.filter(spectrumIn);";
@@ -51,7 +52,8 @@ public class Java extends AbstractSimpleFilter {
 	
 	@Override
 	public void initialize() {
-		code = new Parameter<>("Java Code", new JavaCodeStyle(), defaultCode, this::validate);
+		style = new JavaCodeStyle();
+		code = new Parameter<>("Java Code", style, defaultCode, this::validate);
 		addParameter(code);
 	}
 	
@@ -72,7 +74,7 @@ public class Java extends AbstractSimpleFilter {
 			boltJavaMap.apply(new float[]{1, 2, 3, 4});
 			return true;
 		} catch (Exception e) {
-			editor.errorMessage = e.getMessage();
+			style.errorMessage = e.getMessage();
 			e.printStackTrace();
 			return false;
 		}
