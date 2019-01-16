@@ -31,7 +31,7 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.1";
+		return "1.2";
 	}
 	
 	@Override

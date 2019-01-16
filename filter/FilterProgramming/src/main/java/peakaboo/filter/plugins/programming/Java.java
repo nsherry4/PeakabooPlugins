@@ -41,7 +41,7 @@ public class Java extends AbstractSimpleFilter {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.1";
+		return "1.2";
 	}
 	
 	@Override

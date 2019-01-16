@@ -4,7 +4,7 @@
 
 	<groupId>net.sciencestudio.peakaboo.plugins</groupId>
 	<artifactId>Sigray</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>Sigray</name>
