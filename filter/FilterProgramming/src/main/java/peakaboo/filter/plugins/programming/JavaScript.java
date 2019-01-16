@@ -1,6 +1,8 @@
 package peakaboo.filter.plugins.programming;
 
 
+import cyclops.ISpectrum;
+import cyclops.ReadOnlySpectrum;
 import de.sciss.syntaxpane.syntaxkits.JavaScriptSyntaxKit;
 import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
@@ -12,8 +14,6 @@ import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.editors.JavaScriptCodeStyle;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import peakaboo.filter.model.FilterType;
-import scitypes.ISpectrum;
-import scitypes.ReadOnlySpectrum;
 
 
 public class JavaScript extends AbstractSimpleFilter {
@@ -58,7 +58,7 @@ public class JavaScript extends AbstractSimpleFilter {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.1";
+		return "1.2";
 	}
 	
 	@Override

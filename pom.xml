@@ -12,6 +12,7 @@
   <modules>
     <module>filter</module>
     <module>datasource</module>
+    <module>AllInOne</module>
   </modules>
   
   <build>

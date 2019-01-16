@@ -9,6 +9,8 @@ import java.util.Optional;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import cyclops.ISpectrum;
+import cyclops.Spectrum;
 import net.sciencestudio.autodialog.model.Group;
 import net.sciencestudio.bolt.plugin.core.AlphaNumericComparitor;
 import peakaboo.datasource.model.components.datasize.DataSize;
@@ -20,8 +22,6 @@ import peakaboo.datasource.model.components.scandata.ScanData;
 import peakaboo.datasource.model.components.scandata.SimpleScanData;
 import peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import peakaboo.datasource.plugin.AbstractDataSource;
-import scitypes.ISpectrum;
-import scitypes.Spectrum;
 
 public class Sigray2018HDF5 extends AbstractDataSource {
 
@@ -31,7 +31,7 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.1";
+		return "1.2";
 	}
 	
 	@Override
@@ -47,7 +47,13 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 
 	@Override
 	public void read(List<Path> paths) throws Exception {
-		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
+		String title = "";
+		if (paths.size() == 1) {
+			title = paths.get(0).getFileName().toString();
+		} else {
+			title = paths.get(0).getParent().getFileName().toString();
+		}
+		scandata = new SimpleScanData(title);
 		dataSize = new SimpleDataSize();
 		
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
@@ -88,12 +94,6 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		reader.close();
 
 		
-		/*
-		 * data is stored im mca_arr in x, y, z order, but we're going through
-		 * one spectrum at a time for speed. Because we don't want to store
-		 * everything in memory, we're using a special kind of list which writes
-		 * compressed data to disk.
-		 */
 		for (int y = 0; y < dy; y++) { // y-axis
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis

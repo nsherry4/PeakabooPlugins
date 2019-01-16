@@ -4,7 +4,7 @@
 
 	<groupId>net.sciencestudio.peakaboo.plugins</groupId>
 	<artifactId>Vespers</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>Vespers</name>
@@ -23,8 +23,9 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sciencestudio.peakaboo</groupId>
-			<artifactId>PeakabooSDK</artifactId>
-			<version>5.0-SNAPSHOT</version>
+			<artifactId>libpeakaboo</artifactId>
+			<version>5-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>localjars</groupId>
@@ -46,6 +47,11 @@
 			<artifactId>ssutilities</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.0.4</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -60,7 +66,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>

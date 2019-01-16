@@ -4,7 +4,7 @@
 
 	<groupId>net.sciencestudio.peakaboo.plugins</groupId>
 	<artifactId>Sigray</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>Sigray</name>
@@ -23,8 +23,8 @@
 		</dependency>
 		<dependency>
 			<groupId>net.sciencestudio.peakaboo</groupId>
-			<artifactId>PeakabooSDK</artifactId>
-			<version>5.0-SNAPSHOT</version>
+			<artifactId>libpeakaboo</artifactId>
+			<version>5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.systemsx.cisd/sis-jhdf5-batteries_included -->
@@ -49,7 +49,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.7.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -59,6 +59,7 @@
 			<!-- Build jar with dependencies bundled -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
 				<configuration>
 					<outputDirectory>${project.basedir}/../../Plugins/</outputDirectory>
 					<finalName>${project.artifactId}-${project.version}</finalName>

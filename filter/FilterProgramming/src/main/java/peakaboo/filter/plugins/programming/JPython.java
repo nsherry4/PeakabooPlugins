@@ -1,6 +1,8 @@
 package peakaboo.filter.plugins.programming;
 
 
+import cyclops.ISpectrum;
+import cyclops.ReadOnlySpectrum;
 import net.sciencestudio.autodialog.model.Parameter;
 import net.sciencestudio.autodialog.model.style.editors.TextAreaStyle;
 import net.sciencestudio.bolt.scripting.BoltScriptExecutionException;
@@ -8,8 +10,6 @@ import net.sciencestudio.bolt.scripting.functions.BoltMap;
 import peakaboo.filter.editors.CodeEditor;
 import peakaboo.filter.model.AbstractSimpleFilter;
 import peakaboo.filter.model.FilterType;
-import scitypes.ISpectrum;
-import scitypes.ReadOnlySpectrum;
 
 
 public class JPython extends AbstractSimpleFilter {
@@ -53,7 +53,7 @@ public class JPython extends AbstractSimpleFilter {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.1";
+		return "1.2";
 	}
 	
 	@Override

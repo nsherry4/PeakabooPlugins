@@ -38,7 +38,7 @@ public class Sigray2018HDF5FileFormat implements FileFormat {
 
 	@Override
 	public String getFormatName() {
-		return "Other Sigray HDF5";
+		return "Sigray HDF5 2018";
 	}
 
 	@Override
