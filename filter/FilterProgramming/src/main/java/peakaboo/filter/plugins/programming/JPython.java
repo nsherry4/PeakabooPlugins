@@ -93,7 +93,8 @@ public class JPython extends AbstractSimpleFilter {
 				throw new BoltScriptExecutionException("Type mismatch for spectrumOut");
 			}
 		} catch (Exception e) {
-			editor.errorMessage = e.getMessage();
+			//TODO: Need a PythonCodeStyle to move this data to the ui
+			//style.errorMessage = e.getMessage();
 			return false;
 		}
 		

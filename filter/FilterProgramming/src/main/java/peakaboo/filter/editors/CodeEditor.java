@@ -41,9 +41,10 @@ public class CodeEditor extends AbstractSwingEditor<String>
 	
 	private String language;
 	private DefaultSyntaxKit syntaxKit;
-	public String errorMessage;
 	
 	private JPanel panel;
+	
+	private CodeStyle style;
 	
 	public CodeEditor(String language, DefaultSyntaxKit syntaxKit)
 	{
@@ -56,7 +57,9 @@ public class CodeEditor extends AbstractSwingEditor<String>
 	{
 	
 		this.param = param;
+		this.style = (CodeStyle) param.getStyle();
 		panel = new JPanel();
+		toolbar = new JToolBar();
 		
 		DefaultSyntaxKit.initKit();
 		
@@ -65,6 +68,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
 		codeEditor.setEditorKit(syntaxKit);
 		codeEditor.setMinimumSize(new Dimension(400, 200));
         JScrollPane scrPane = new JScrollPane(codeEditor);
+        scrPane.setMinimumSize(new Dimension(450, 250));
         
         if (language != null) {
         	codeEditor.setContentType("text/" + language);
@@ -74,7 +78,7 @@ public class CodeEditor extends AbstractSwingEditor<String>
         param.getValueHook().addListener(v -> this.setFromParameter());
         
         
-        toolbar = new JToolBar();
+        
         toolbar.setFloatable(false);
         toolbar.setOpaque(false);
         toolbar.setBorder(Spacing.bNone());
@@ -206,13 +210,13 @@ public class CodeEditor extends AbstractSwingEditor<String>
 	public void validateFailed() {
 		JOptionPane.showMessageDialog(
 				panel, 
-				errorMessage, 
+				style.errorMessage, 
 				"Code Error", 
 				JOptionPane.ERROR_MESSAGE,
 				StockIcon.BADGE_WARNING.toImageIcon(IconSize.ICON)
 			);
 		
-		errorMessage = "";
+		style.errorMessage = "";
 	}
 
 	@Override
