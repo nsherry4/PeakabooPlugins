@@ -17,6 +17,7 @@
     <module>Inca</module>
     <module>Sigray</module>
     <module>Vespers</module>
+    <module>Raw</module>
   </modules>
   
   <build>
