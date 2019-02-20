@@ -27,24 +27,12 @@
 			<version>5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/ch.systemsx.cisd/sis-jhdf5-batteries_included -->
-		<dependency>
-			<groupId>ch.systemsx.cisd</groupId>
-			<artifactId>sis-jhdf5-batteries_included</artifactId>
-			<version>1.0</version>
-		</dependency>
+
 
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>kompics</id>
-			<url>http://kompics.sics.se/maven/repository/</url>
-		</repository>
-	</repositories>
-
-
 	<build>
+		
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -55,30 +43,23 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
-			<!-- Build jar with dependencies bundled -->
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<outputDirectory>${project.basedir}/../../Plugins/</outputDirectory>
-					<finalName>${project.artifactId}-${project.version}</finalName>
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
 				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id> <!-- this is used for inheritance merges -->
-						<phase>package</phase> <!-- bind to the packaging phase -->
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-						
+			
+			<!-- Move jar up -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<outputDirectory>../../Plugins/</outputDirectory>
+				</configuration>
+			</plugin>
+			
 		</plugins>
 	</build>
 
