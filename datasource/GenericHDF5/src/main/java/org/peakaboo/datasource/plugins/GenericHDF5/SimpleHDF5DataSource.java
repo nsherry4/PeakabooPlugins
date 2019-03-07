@@ -92,7 +92,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	}
 	
 	@Override
-	public ScanData getScanData() {
+	public SimpleScanData getScanData() {
 		return scandata;
 	}
 	

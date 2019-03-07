@@ -2,6 +2,7 @@ package org.peakaboo.datasource.plugins.GenericHDF5;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
@@ -12,10 +13,17 @@ import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
 public class SimpleHDF5FileFormat implements FileFormat {
 
-	private String dataPath, formatName, formatDescription;
+	private List<String> dataPaths;
+	private String formatName, formatDescription;
 	
 	public SimpleHDF5FileFormat(String dataPath, String formatName, String formatDescription) {
-		this.dataPath = dataPath;
+		this.dataPaths = Collections.singletonList(dataPath);
+		this.formatName = formatName;
+		this.formatDescription = formatDescription;
+	}
+	
+	public SimpleHDF5FileFormat(List<String> dataPaths, String formatName, String formatDescription) {
+		this.dataPaths = dataPaths;
 		this.formatName = formatName;
 		this.formatDescription = formatDescription;
 	}
@@ -27,11 +35,13 @@ public class SimpleHDF5FileFormat implements FileFormat {
 
 	public FileFormatCompatibility compatibility(Path path) {
 		try (IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile())) {
-			reader.getDataSetInformation(dataPath);
+			for (String dataPath : dataPaths) {
+				reader.getDataSetInformation(dataPath);
+			}
 		} catch (Exception e) {
 			return FileFormatCompatibility.NO;
 		}
-		return FileFormatCompatibility.MAYBE_BY_CONTENTS;
+		return FileFormatCompatibility.YES_BY_CONTENTS;
 	}
 
 	@Override

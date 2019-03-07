@@ -142,7 +142,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 		int dataChannels = paramChannels.getValue();
 		
 		scandata = new SimpleScanData(path.getFileName().toString());
-		LoaderQueue queue = scandata.createLoaderQueue(20);
+		LoaderQueue queue = scandata.createLoaderQueue(100);
 		long size = Files.size(path);
 		getInteraction().notifyScanCount((int)(size / dataChannels));
 		

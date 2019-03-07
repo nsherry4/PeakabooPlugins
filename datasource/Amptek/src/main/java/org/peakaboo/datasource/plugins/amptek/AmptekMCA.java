@@ -19,6 +19,8 @@ import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
+import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
+import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 
 import cyclops.ISpectrum;
@@ -31,6 +33,7 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 
 	private Spectrum spectrum;
 	private String scanName; 
+	private Analysis analysis;
 	
 	
 	public AmptekMCA() {
@@ -56,6 +59,9 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 		int endIndex = lines.indexOf("<<END>>");
 		
 		Spectrum s = new ISpectrum(lines.subList(startIndex, endIndex).stream().map(line -> Float.parseFloat(line)).collect(toList()));
+		
+		analysis = new DataSourceAnalysis();
+		analysis.process(s);
 		
 		r.close();
 		
@@ -152,6 +158,11 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	@Override
 	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
+	}
+
+	@Override
+	public Analysis getAnalysis() {
+		return this.analysis;
 	}
 
 

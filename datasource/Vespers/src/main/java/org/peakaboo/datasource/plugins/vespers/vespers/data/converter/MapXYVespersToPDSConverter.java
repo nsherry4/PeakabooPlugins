@@ -19,6 +19,8 @@ import org.peakaboo.datasource.model.components.interaction.SimpleInteraction;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
+import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
+import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugins.vespers.ConverterFactoryDelegatingDSP;
 
 import ca.sciencestudio.data.daf.DAFDataParser;
@@ -89,6 +91,8 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	private double endX = 0.0, endY = 0.0;
 	private boolean hasStartX = false, hasStartY = false;
 	private  boolean hasEndX = false, hasEndY = false;	
+	
+	private Analysis analysis;
 	
 	public MapXYVespersToPDSConverter(String fromFormat, String toFormat, boolean forceUpdate) {
 		super(fromFormat, toFormat, forceUpdate);
@@ -335,9 +339,11 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 		}
 		
 		// Fill scans with spectrums //
-		
+		this.analysis = new DataSourceAnalysis();
 		for(float[] spectrum : spectrums) {
-			scans.add(new ISpectrum(spectrum, false));
+			ISpectrum s = new ISpectrum(spectrum, false);
+			this.analysis.process(s);
+			scans.add(s);
 		}
 		
 		// Clear the unused spectrums //
@@ -865,6 +871,11 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	@Override
 	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
+	}
+
+	@Override
+	public Analysis getAnalysis() {
+		return this.analysis;
 	}
 
 

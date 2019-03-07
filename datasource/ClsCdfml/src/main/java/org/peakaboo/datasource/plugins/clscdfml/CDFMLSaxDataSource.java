@@ -21,6 +21,8 @@ import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibili
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
+import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
+import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 
 import cyclops.Bounds;
@@ -46,6 +48,8 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	
 	CDFMLReader									reader;
 
+	private Analysis analysis;
+	
 	public CDFMLSaxDataSource()
 	{
 		
@@ -545,9 +549,11 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 			
 			
 		}
-		
+		this.analysis.process(spectrum);
 		scanReadCount++;
-		getInteraction().notifyScanRead(1);
+		if (scanReadCount % 10 == 0) {
+			getInteraction().notifyScanRead(10);
+		}
 		
 	}
 	
@@ -610,7 +616,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 	public void read(Path file) throws Exception
 	{
-		
+		this.analysis = new DataSourceAnalysis();
 		reader.read(file.toFile().getAbsolutePath(), this.getInteraction()::checkReadAborted);
 
 		
@@ -683,6 +689,11 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	@Override
 	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
+	}
+
+	@Override
+	public Analysis getAnalysis() {
+		return this.analysis;
 	}
 	
 
