@@ -12,6 +12,7 @@
   <modules>
     <module>GenericHDF5</module>
     <module>APSSector20</module>
+    <module>APS8BM</module>
     <module>Amptek</module>
     <module>ClsCdfml</module>
     <module>Inca</module>
