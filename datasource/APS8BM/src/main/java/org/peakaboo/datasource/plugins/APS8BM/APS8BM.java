@@ -93,7 +93,7 @@ public class APS8BM extends SimpleHDF5DataSource {
 			for (int x = 0; x < width; x++) {
 				//read scan
 				int index = (y*width+x);
-				MDFloatArray mdarray = floatreader.readMDArrayBlock(PATH, range, new long[] {0, x, y});
+				MDFloatArray mdarray = floatreader.readMDArrayBlock(PATH, range, new long[] {0, y, x});
 				super.submitScan(index, new ISpectrum(mdarray.getAsFlatArray(), false));
 				
 				//read physical position
