@@ -19,11 +19,11 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import cyclops.ISpectrum;
-import cyclops.Pair;
-import cyclops.Range;
-import cyclops.SparsedList;
-import cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.Pair;
+import org.peakaboo.framework.cyclops.Range;
+import org.peakaboo.framework.cyclops.SparsedList;
+import org.peakaboo.framework.cyclops.Spectrum;
 
 
 public abstract class CDFMLReader extends DefaultHandler2

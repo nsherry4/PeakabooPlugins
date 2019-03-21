@@ -13,7 +13,7 @@ import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibili
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 
-import cyclops.ReadOnlySpectrum;
+import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
 
 /**
  * @author maxweld

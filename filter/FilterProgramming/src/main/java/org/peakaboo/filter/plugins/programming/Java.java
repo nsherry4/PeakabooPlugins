@@ -7,12 +7,12 @@ import org.peakaboo.filter.editors.JavaCodeStyle;
 import org.peakaboo.filter.model.AbstractSimpleFilter;
 import org.peakaboo.filter.model.FilterType;
 
-import cyclops.ISpectrum;
-import cyclops.ReadOnlySpectrum;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
 import de.sciss.syntaxpane.syntaxkits.JavaSyntaxKit;
-import net.sciencestudio.autodialog.model.Parameter;
-import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
-import net.sciencestudio.bolt.compiler.BoltJavaMap;
+import org.peakaboo.framework.autodialog.model.Parameter;
+import org.peakaboo.framework.autodialog.view.swing.editors.SwingEditorFactory;
+import org.peakaboo.framework.bolt.compiler.BoltJavaMap;
 
 
 public class Java extends AbstractSimpleFilter {

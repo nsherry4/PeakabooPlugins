@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>net.sciencestudio.peakaboo</groupId>
+	<groupId>org.peakaboo</groupId>
 	<artifactId>AllInOne</artifactId>
 	<version>5-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -34,38 +34,38 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>Sigray</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>Amptek</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>ClsCdfml</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>Inca</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>Vespers</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
-			<groupId>peakaboo.datasource.plugins</groupId>
+			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>APSSector20</artifactId>
-			<version>1.1</version>
+			<version>1.2</version>
 		</dependency>
 
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo</groupId>
+			<groupId>org.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
 			<version>5-SNAPSHOT</version>
 		</dependency>

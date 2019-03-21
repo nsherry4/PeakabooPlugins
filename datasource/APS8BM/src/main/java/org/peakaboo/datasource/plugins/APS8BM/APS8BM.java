@@ -18,10 +18,10 @@ import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5FloatReader;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
-import cyclops.Coord;
-import cyclops.ISpectrum;
-import cyclops.SISize;
-import net.sciencestudio.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.autodialog.model.Group;
 
 public class APS8BM extends SimpleHDF5DataSource {
 

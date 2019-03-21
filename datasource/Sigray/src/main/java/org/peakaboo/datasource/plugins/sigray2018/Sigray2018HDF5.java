@@ -19,10 +19,10 @@ import org.peakaboo.datasource.plugin.AbstractDataSource;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import cyclops.ISpectrum;
-import cyclops.Spectrum;
-import net.sciencestudio.autodialog.model.Group;
-import net.sciencestudio.bolt.plugin.core.AlphaNumericComparitor;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.autodialog.model.Group;
+import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 
 public class Sigray2018HDF5 extends AbstractDataSource {
 

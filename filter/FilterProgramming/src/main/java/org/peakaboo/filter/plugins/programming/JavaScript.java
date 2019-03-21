@@ -7,15 +7,15 @@ import org.peakaboo.filter.editors.JavaScriptCodeStyle;
 import org.peakaboo.filter.model.AbstractSimpleFilter;
 import org.peakaboo.filter.model.FilterType;
 
-import cyclops.ISpectrum;
-import cyclops.ReadOnlySpectrum;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
 import de.sciss.syntaxpane.syntaxkits.JavaScriptSyntaxKit;
-import net.sciencestudio.autodialog.model.Parameter;
-import net.sciencestudio.autodialog.view.swing.editors.SwingEditorFactory;
-import net.sciencestudio.bolt.scripting.BoltScriptExecutionException;
-import net.sciencestudio.bolt.scripting.functions.BoltMap;
-import net.sciencestudio.bolt.scripting.languages.JavascriptLanguage;
-import net.sciencestudio.bolt.scripting.languages.Language;
+import org.peakaboo.framework.autodialog.model.Parameter;
+import org.peakaboo.framework.autodialog.view.swing.editors.SwingEditorFactory;
+import org.peakaboo.framework.bolt.scripting.BoltScriptExecutionException;
+import org.peakaboo.framework.bolt.scripting.functions.BoltMap;
+import org.peakaboo.framework.bolt.scripting.languages.JavascriptLanguage;
+import org.peakaboo.framework.bolt.scripting.languages.Language;
 
 
 public class JavaScript extends AbstractSimpleFilter {

@@ -19,12 +19,12 @@ import org.peakaboo.datasource.plugin.AbstractDataSource;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import cyclops.Bounds;
-import cyclops.Coord;
-import cyclops.ISpectrum;
-import cyclops.SISize;
-import cyclops.Spectrum;
-import net.sciencestudio.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.Bounds;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.autodialog.model.Group;
 
 public class SigrayHDF5 extends AbstractDataSource {
 

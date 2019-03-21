@@ -25,14 +25,14 @@ import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
 import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 
-import cyclops.Bounds;
-import cyclops.Coord;
-import cyclops.ISpectrum;
-import cyclops.Range;
-import cyclops.SISize;
-import cyclops.Spectrum;
-import cyclops.SpectrumCalculations;
-import net.sciencestudio.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.Bounds;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.Range;
+import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.SpectrumCalculations;
+import org.peakaboo.framework.autodialog.model.Group;
 
 
 public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData

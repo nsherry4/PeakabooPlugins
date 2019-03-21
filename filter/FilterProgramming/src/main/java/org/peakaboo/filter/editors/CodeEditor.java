@@ -24,14 +24,14 @@ import org.peakaboo.common.Env;
 import org.peakaboo.common.PeakabooLog;
 
 import de.sciss.syntaxpane.DefaultSyntaxKit;
-import net.sciencestudio.autodialog.model.Parameter;
-import net.sciencestudio.autodialog.view.swing.editors.AbstractSwingEditor;
-import swidget.dialogues.fileio.SimpleFileExtension;
-import swidget.dialogues.fileio.SwidgetFilePanels;
-import swidget.icons.IconSize;
-import swidget.icons.StockIcon;
-import swidget.widgets.Spacing;
-import swidget.widgets.buttons.ToolbarImageButton;
+import org.peakaboo.framework.autodialog.model.Parameter;
+import org.peakaboo.framework.autodialog.view.swing.editors.AbstractSwingEditor;
+import org.peakaboo.framework.swidget.dialogues.fileio.SimpleFileExtension;
+import org.peakaboo.framework.swidget.dialogues.fileio.SwidgetFilePanels;
+import org.peakaboo.framework.swidget.icons.IconSize;
+import org.peakaboo.framework.swidget.icons.StockIcon;
+import org.peakaboo.framework.swidget.widgets.Spacing;
+import org.peakaboo.framework.swidget.widgets.buttons.ToolbarImageButton;
 
 public class CodeEditor extends AbstractSwingEditor<String>
 {

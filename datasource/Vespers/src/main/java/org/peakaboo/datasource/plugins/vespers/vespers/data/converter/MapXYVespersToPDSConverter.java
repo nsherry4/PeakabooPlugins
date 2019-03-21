@@ -29,12 +29,12 @@ import ca.sciencestudio.data.daf.DAFSpectrumParser;
 import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.vespers.data.converter.AbstractMapXYVespersConverter;
-import cyclops.Bounds;
-import cyclops.Coord;
-import cyclops.ISpectrum;
-import cyclops.SISize;
-import cyclops.Spectrum;
-import net.sciencestudio.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.Bounds;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.autodialog.model.Group;
 
 /**
  * 

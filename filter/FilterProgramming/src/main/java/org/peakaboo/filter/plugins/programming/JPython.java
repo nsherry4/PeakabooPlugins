@@ -5,12 +5,12 @@ import org.peakaboo.filter.editors.CodeEditor;
 import org.peakaboo.filter.model.AbstractSimpleFilter;
 import org.peakaboo.filter.model.FilterType;
 
-import cyclops.ISpectrum;
-import cyclops.ReadOnlySpectrum;
-import net.sciencestudio.autodialog.model.Parameter;
-import net.sciencestudio.autodialog.model.style.editors.TextAreaStyle;
-import net.sciencestudio.bolt.scripting.BoltScriptExecutionException;
-import net.sciencestudio.bolt.scripting.functions.BoltMap;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
+import org.peakaboo.framework.autodialog.model.Parameter;
+import org.peakaboo.framework.autodialog.model.style.editors.TextAreaStyle;
+import org.peakaboo.framework.bolt.scripting.BoltScriptExecutionException;
+import org.peakaboo.framework.bolt.scripting.functions.BoltMap;
 
 
 public class JPython extends AbstractSimpleFilter {

@@ -22,11 +22,11 @@ import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
 import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
+import org.peakaboo.framework.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.util.StringInput;
 
-import cyclops.ISpectrum;
-import cyclops.Spectrum;
-import cyclops.util.StringInput;
-import net.sciencestudio.autodialog.model.Group;
 
 
 public class AmptekMCA extends AbstractDataSource implements ScanData {

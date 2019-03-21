@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>net.sciencestudio.peakaboo.plugins</groupId>
+	<groupId>org.peakaboo.plugins</groupId>
 	<artifactId>Vespers</artifactId>
 	<version>1.2</version>
 	<packaging>jar</packaging>
@@ -22,7 +22,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sciencestudio.peakaboo</groupId>
+			<groupId>org.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
 			<version>5-SNAPSHOT</version>
 			<scope>provided</scope>

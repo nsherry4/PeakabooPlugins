@@ -25,9 +25,9 @@ import ch.systemsx.cisd.hdf5.HDF5MDDataBlock;
 import ch.systemsx.cisd.hdf5.IHDF5FloatReader;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import cyclops.Coord;
-import cyclops.ISpectrum;
-import cyclops.SISize;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.SISize;
 
 public class APSSector20 extends SimpleHDF5DataSource {
 
