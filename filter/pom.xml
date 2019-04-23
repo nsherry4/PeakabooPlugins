@@ -10,7 +10,6 @@
   <url>http://maven.apache.org</url>
   
   <modules>
-    <module>FilterProgramming</module>
   </modules>
   
   <build>
