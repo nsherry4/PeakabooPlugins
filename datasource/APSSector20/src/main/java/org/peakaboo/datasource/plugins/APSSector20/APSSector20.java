@@ -44,7 +44,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.2";
+		return "1.3";
 	}
 	
 	@Override

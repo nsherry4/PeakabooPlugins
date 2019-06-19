@@ -31,6 +31,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	private SimpleScanData scanData;
 	private Map<String, String> tags;
 	
+	private static final String FORMAT_HEADER = "#FORMAT      : EMSA/MAS Spectral Data File";
 	
 	public Emsa() {
 		
@@ -39,7 +40,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.2";
+		return "1.3";
 	}
 	
 	@Override
@@ -52,13 +53,14 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	 ******************************/
 	@Override
 	public List<String> getFileExtensions() {
-		return Arrays.asList("txt", "emsa");
+		return Arrays.asList("txt", "emsa", "msa");
 	}
 
 	public FileFormatCompatibility compatibility(Path file) {
 		if (
 				!file.toAbsolutePath().toString().toLowerCase().endsWith(".txt") && 
-				!file.toAbsolutePath().toString().toLowerCase().endsWith(".emsa")
+				!file.toAbsolutePath().toString().toLowerCase().endsWith(".emsa") &&
+				!file.toAbsolutePath().toString().toLowerCase().endsWith(".msa")
 			) return FileFormatCompatibility.NO;
 		
 		try {
@@ -66,7 +68,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 			scanner.useDelimiter("\n");
 			if (!scanner.hasNext()) return FileFormatCompatibility.NO;
 			String line = scanner.next();
-			if (!line.trim().equals("#FORMAT      : EMSA/MAS Spectral Data File")) return FileFormatCompatibility.NO;
+			if (!line.trim().toLowerCase().equals(FORMAT_HEADER.toLowerCase())) return FileFormatCompatibility.NO;
 			return FileFormatCompatibility.YES_BY_CONTENTS;
 		} catch (IOException e) {
 			return FileFormatCompatibility.NO;
