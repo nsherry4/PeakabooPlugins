@@ -66,7 +66,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 	@Override
 	public String pluginVersion() {
-		return "1.2";
+		return "1.3";
 	}
 	
 	@Override
