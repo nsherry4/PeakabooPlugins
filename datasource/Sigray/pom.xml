@@ -2,9 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.peakaboo.plugins</groupId>
+	<parent>
+		<groupId>org.peakaboo.plugins</groupId>
+		<artifactId>datasource</artifactId>
+		<version>5.4-SNAPSHOT</version>
+	</parent>
 	<artifactId>Sigray</artifactId>
-	<version>1.3</version>
 	<packaging>jar</packaging>
 
 	<name>Sigray</name>
@@ -24,7 +27,7 @@
 		<dependency>
 			<groupId>org.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
-			<version>5-SNAPSHOT</version>
+			<version>5.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.systemsx.cisd/sis-jhdf5-batteries_included -->

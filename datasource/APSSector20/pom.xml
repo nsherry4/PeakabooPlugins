@@ -3,11 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.peakaboo.plugins</groupId>
+	<parent>
+		<groupId>org.peakaboo.plugins</groupId>
+		<artifactId>datasource</artifactId>
+		<version>5.4-SNAPSHOT</version>
+	</parent>
 	<artifactId>APSSector20</artifactId>
-	<version>1.3</version>
 	<packaging>jar</packaging>
-
 	<name>APSSector20</name>
 	<url>http://maven.apache.org</url>
 
@@ -25,12 +27,12 @@
 		<dependency>
 			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>GenericHDF5</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>5.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
-			<version>5-SNAPSHOT</version>
+			<version>5.4-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
