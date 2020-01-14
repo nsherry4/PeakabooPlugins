@@ -17,6 +17,7 @@
 	<modules>
 		<module>GenericHDF5</module>
 		<module>APSSector20</module>
+		<module>APSSector20BMLabView</module>
 		<module>APSSector11</module>
 		<module>APS8BM</module>
 		<module>Amptek</module>
