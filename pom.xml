@@ -7,7 +7,7 @@
 	<groupId>org.peakaboo.plugins</groupId>
 	<artifactId>plugins</artifactId>
 	<name>plugins</name>
-	<version>5.4-SNAPSHOT</version>
+	<version>5.4</version>
 	<packaging>pom</packaging>
 	<url>http://maven.apache.org</url>
 

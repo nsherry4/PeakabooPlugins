@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.peakaboo.plugins</groupId>
 		<artifactId>datasource</artifactId>
-		<version>5.4-SNAPSHOT</version>
+		<version>5.4</version>
 	</parent>
 	<artifactId>APS8BM</artifactId>
 	<packaging>jar</packaging>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>org.peakaboo.plugins</groupId>
 			<artifactId>GenericHDF5</artifactId>
-			<version>5.4-SNAPSHOT</version>
+			<version>5.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.peakaboo</groupId>
