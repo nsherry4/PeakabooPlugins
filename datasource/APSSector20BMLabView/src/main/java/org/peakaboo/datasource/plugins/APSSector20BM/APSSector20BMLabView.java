@@ -1,10 +1,6 @@
 package org.peakaboo.datasource.plugins.APSSector20BM;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -13,23 +9,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
-import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
-import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.ISpectrum;
-import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
-import org.peakaboo.framework.cyclops.Spectrum;
-import org.peakaboo.framework.cyclops.util.StringInput;
 
 
 
@@ -119,7 +108,7 @@ public class APSSector20BMLabView extends AbstractDataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "0.1";
+		return "1.0";
 	}
 
 	@Override
