@@ -7,7 +7,7 @@
 	<groupId>org.peakaboo.plugins</groupId>
 	<artifactId>plugins</artifactId>
 	<name>plugins</name>
-	<version>5.4-SNAPSHOT</version>
+	<version>5.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<url>http://maven.apache.org</url>
 
@@ -16,6 +16,21 @@
 		<module>datasource</module>
 		<module>AllInOne</module>
 	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.peakaboo</groupId>
+			<artifactId>libpeakaboo</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

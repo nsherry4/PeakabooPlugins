@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.peakaboo.plugins</groupId>
 		<artifactId>plugins</artifactId>
-		<version>5.4-SNAPSHOT</version>
+		<version>5.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>datasource</artifactId>
 	<name>datasource</name>
@@ -26,6 +26,7 @@
 		<module>Sigray</module>
 		<module>Vespers</module>
 		<module>Raw</module>
+		<module>ClsCmcf</module>
 	</modules>
 
 	<build>

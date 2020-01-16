@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.peakaboo.plugins</groupId>
 		<artifactId>datasource</artifactId>
-		<version>5.4-SNAPSHOT</version>
+		<version>5.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>GenericHDF5</artifactId>
 	<packaging>jar</packaging>
@@ -19,23 +19,11 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/ch.systemsx.cisd/sis-jhdf5-batteries_included -->
 		<dependency>
 			<groupId>ch.systemsx.cisd</groupId>
 			<artifactId>sis-jhdf5-batteries_included</artifactId>
 			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.peakaboo</groupId>
-			<artifactId>libpeakaboo</artifactId>
-			<version>5.4-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

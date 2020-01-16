@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.peakaboo.plugins</groupId>
 		<artifactId>filters</artifactId>
-		<version>5.4-SNAPSHOT</version>
+		<version>5.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>backports</artifactId>
 	<name>backports</name>
@@ -17,21 +17,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.peakaboo</groupId>
-			<artifactId>libpeakaboo</artifactId>
-			<version>5.4-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
 
 	<build>
 
