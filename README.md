@@ -1,5 +1,5 @@
 # PeakabooPlugins
-This repository contains all of the first-party plugins developed for Peakaboo.
+This repository contains all of the first-party plugins developed for [Peakaboo](https://github.com/nsherry4/Peakaboo).
 
 [Download Plugins](https://github.com/nsherry4/PeakabooPlugins/releases)
 
