@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>GenericHDF5</module>
+		<module>GenericJHDF</module>
 		<module>APSSector20</module>
 		<module>APSSector20BMLabView</module>
 		<module>APSSector11</module>
@@ -27,6 +28,7 @@
 		<module>Vespers</module>
 		<module>Raw</module>
 		<module>ClsCmcf</module>
+		<module>CHESS</module>
 	</modules>
 
 	<build>
