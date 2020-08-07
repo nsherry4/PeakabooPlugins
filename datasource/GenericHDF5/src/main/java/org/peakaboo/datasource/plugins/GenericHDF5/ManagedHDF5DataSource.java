@@ -32,7 +32,7 @@ public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 		
 		/*
 		 * We don't know what format the data is stored in, but we are sure 
-		 * that any spectrum contained aren't already in our dataset. That means
+		 * that any spectrum contained aren't already in our dataset.
 		 */
 		Map<Integer, Spectrum> scans = new HashMap<>();
 		

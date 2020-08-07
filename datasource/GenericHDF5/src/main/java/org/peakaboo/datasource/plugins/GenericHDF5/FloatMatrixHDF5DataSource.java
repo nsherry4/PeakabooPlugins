@@ -1,12 +1,15 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import org.peakaboo.datasource.model.DataSource;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import org.peakaboo.framework.cyclops.ISpectrum;
+import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.SpectrumCalculations;
 
 import ch.systemsx.cisd.base.mdarray.MDFloatArray;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
@@ -25,17 +28,28 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	private int yIndex = -1;
 	private int zIndex = -1;
 	
-	private String dataPath;
-	
 	public FloatMatrixHDF5DataSource(String axisOrder, String dataPath, String name, String description) {
 		super(dataPath, name, description);
-		this.dataPath = dataPath;
-		
+		readAxisOrder(axisOrder);
+	}
+	
+	/**
+	 * More than one dataPath here means more than one detector, the values of which
+	 * will be summed.
+	 */
+	public FloatMatrixHDF5DataSource(String axisOrder, List<String> dataPaths, String name, String description) {
+		super(dataPaths, name, description);
+		readAxisOrder(axisOrder);
+	}
+	
+	
+	private void readAxisOrder(String axisOrder) {
+		//X and Y represent x and y positions on a raster scan/map
+		//Z represents channels in a single scan
 		axisOrder = axisOrder.toLowerCase();
 		xIndex = axisOrder.indexOf("x");
 		yIndex = axisOrder.indexOf("y");
 		zIndex = axisOrder.indexOf("z");
-		
 	}
 
 	@Override
@@ -45,7 +59,7 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		}
 
 		IHDF5Reader reader = HDF5Factory.openForReading(path.toFile());
-		HDF5DataSetInformation info = reader.getDataSetInformation(dataPath);
+		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		int channels = (int) info.getDimensions()[zIndex];
 		
 		
@@ -54,26 +68,43 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		DataSize size = getDataSize().get();
 		int height = size.getDataDimensions().y;
 		int width = size.getDataDimensions().x;
-		int[] range = new int[] {-1, -1, -1};
-		range[xIndex] = 1;
-		range[yIndex] = 1;
-		range[zIndex] = channels;
+		int[] range;
+		if (yIndex >= 0) {
+			range = new int[] {-1, -1, -1};
+			range[xIndex] = 1;
+			range[yIndex] = 1;
+			range[zIndex] = channels;
+		} else {
+			//There is no y axis, only scans (x) and channels (z)
+			range = new int[] {-1, -1};
+			range[xIndex] = 1;
+			range[zIndex] = channels;
+		}
 		
 
-		long[] bounds = new long[] {0, 0, 0};
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				//read scan
-				int index = (y*width+x);
-				
-				bounds[yIndex] = y;
-				bounds[xIndex] = x;
-				bounds[zIndex] = 0;
-				
-				MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
-				super.submitScan(index, new ISpectrum(mdarray.getAsFlatArray(), false));
+		long[] bounds = yIndex == -1 ? new long[] {0, 0} : new long[] {0, 0, 0};
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					
+					int index = (y*width+x);
+					Spectrum agg = new ISpectrum(channels);
+					for (String dataPath : dataPaths) {
+						
+						//read scan
+						if (yIndex > -1) { bounds[yIndex] = y; }
+						bounds[xIndex] = x;
+						bounds[zIndex] = 0;
+						MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
+						//get a temporary spectrum that uses the flatarray result as a backing array
+						//and add it's values to agg
+						Spectrum scan = new ISpectrum(mdarray.getAsFlatArray(), true);
+						SpectrumCalculations.addLists_inplace(agg, scan);
+					}
+					super.submitScan(index, agg);
+					
+				}
 			}
-		}
+
 		
 		readMatrixMetadata(reader, channels);
 		
@@ -82,7 +113,7 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	@Override
 	protected DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo) {
 		SimpleDataSize size = new SimpleDataSize();
-		size.setDataHeight((int) datasetInfo.getDimensions()[yIndex]);
+		size.setDataHeight(yIndex == -1 ? 1 : (int) datasetInfo.getDimensions()[yIndex]);
 		size.setDataWidth((int) datasetInfo.getDimensions()[xIndex]);
 		return size;
 	}

@@ -1,6 +1,7 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,6 @@ import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
 import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
@@ -28,14 +28,19 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	private LoaderQueue queue;
 	
 	
-	private String dataPath, name, description;
+	private String name, description;
+	protected List<String> dataPaths;
 	
 	public SimpleHDF5DataSource(String dataPath, String name, String description) {
-		this.dataPath = dataPath;
+		this(Collections.singletonList(dataPath), name, description);
+	}
+
+	public SimpleHDF5DataSource(List<String> dataPaths, String name, String description) {
+		this.dataPaths = dataPaths;
 		this.name = name;
 		this.description = description;
 	}
-
+	
 	@Override
 	public Optional<Group> getParameters(List<Path> paths) {
 		return Optional.empty();
@@ -53,7 +58,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
 	@Override
 	public FileFormat getFileFormat() {
-		return new SimpleHDF5FileFormat(dataPath, name, description);
+		return new SimpleHDF5FileFormat(dataPaths, name, description);
 	}
 
 
@@ -62,7 +67,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
 		
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
-		HDF5DataSetInformation info = reader.getDataSetInformation(dataPath);
+		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		dataSize = getDataSize(paths, info);
 		getInteraction().notifyScanCount(dataSize.getDataDimensions().x * dataSize.getDataDimensions().y);
 
