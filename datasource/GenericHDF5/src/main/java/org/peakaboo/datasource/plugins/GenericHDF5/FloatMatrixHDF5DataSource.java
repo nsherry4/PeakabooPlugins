@@ -2,7 +2,11 @@ package org.peakaboo.datasource.plugins.GenericHDF5;
 
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.peakaboo.datasource.model.DataSource;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
@@ -32,16 +36,11 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		super(dataPath, name, description);
 		readAxisOrder(axisOrder);
 	}
-	
-	/**
-	 * More than one dataPath here means more than one detector, the values of which
-	 * will be summed.
-	 */
-	public FloatMatrixHDF5DataSource(String axisOrder, List<String> dataPaths, String name, String description) {
-		super(dataPaths, name, description);
+
+	public FloatMatrixHDF5DataSource(String axisOrder, String name, String description) {
+		super(name, description);
 		readAxisOrder(axisOrder);
 	}
-	
 	
 	private void readAxisOrder(String axisOrder) {
 		//X and Y represent x and y positions on a raster scan/map
@@ -58,16 +57,15 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
 
-		IHDF5Reader reader = HDF5Factory.openForReading(path.toFile());
+		IHDF5Reader reader = getReader(path);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		int channels = (int) info.getDimensions()[zIndex];
 		
 		
 		//prep for iterating over all points in scan
 		IHDF5FloatReader floatreader = reader.float32();
-		DataSize size = getDataSize().get();
-		int height = size.getDataDimensions().y;
-		int width = size.getDataDimensions().x;
+		int height = dataSize.getDataDimensions().y;
+		int width = dataSize.getDataDimensions().x;
 		int[] range;
 		if (yIndex >= 0) {
 			range = new int[] {-1, -1, -1};
@@ -80,8 +78,15 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 			range[xIndex] = 1;
 			range[zIndex] = channels;
 		}
-		
 
+
+		Map<String, Spectrum> livetimes = new HashMap<>();
+		for (String dataPath : dataPaths) {
+			Spectrum livetime = getDeadtimes(dataPath, reader);
+			SpectrumCalculations.subtractListFrom_inplace(livetime, 1, 0);
+			livetimes.put(dataPath, livetime);
+		}
+		
 		long[] bounds = yIndex == -1 ? new long[] {0, 0} : new long[] {0, 0, 0};
 			for (int y = 0; y < height; y++) {
 				for (int x = 0; x < width; x++) {
@@ -96,8 +101,10 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 						bounds[zIndex] = 0;
 						MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
 						//get a temporary spectrum that uses the flatarray result as a backing array
-						//and add it's values to agg
 						Spectrum scan = new ISpectrum(mdarray.getAsFlatArray(), true);
+						//deadtime correction
+						SpectrumCalculations.divideBy_inplace(scan, livetimes.get(dataPath).get(index));
+						//add scan to aggregate
 						SpectrumCalculations.addLists_inplace(agg, scan);
 					}
 					super.submitScan(index, agg);
@@ -109,17 +116,29 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		readMatrixMetadata(reader, channels);
 		
 	}
-
+	
 	@Override
-	protected DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo) {
+	protected final DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo) {
+		Path path = paths.get(0);
+		return getDataSize(path, datasetInfo);
+	}
+	protected DataSize getDataSize(Path path, HDF5DataSetInformation datasetInfo) {
 		SimpleDataSize size = new SimpleDataSize();
 		size.setDataHeight(yIndex == -1 ? 1 : (int) datasetInfo.getDimensions()[yIndex]);
 		size.setDataWidth((int) datasetInfo.getDimensions()[xIndex]);
 		return size;
 	}
 	
+	protected static IHDF5Reader getReader(Path path) {
+		return HDF5Factory.openForReading(path.toFile());
+	}
+	
 	/**
 	 * Override this method as a hook into the tail end of the default readFile method.
 	 */
 	protected void readMatrixMetadata(IHDF5Reader reader, int channels) {};
+	
+	protected Spectrum getDeadtimes(String dataPath, IHDF5Reader reader) {
+		return new ISpectrum(dataSize.size(), 0f);
+	}
 }

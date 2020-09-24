@@ -48,9 +48,8 @@ public class APS8BM extends FloatMatrixHDF5DataSource {
 	@Override
 	protected void readMatrixMetadata(IHDF5Reader reader, int channels) {
 		
-		DataSize size = getDataSize().get();
-		int height = size.getDataDimensions().y;
-		int width = size.getDataDimensions().x;
+		int height = dataSize.getDataDimensions().y;
+		int width = dataSize.getDataDimensions().x;
 		
 		physical = new SimplePhysicalSize(SISize.um);
 		double[] xpos = reader.readDoubleArray("/MAPS/Scan/x_axis");

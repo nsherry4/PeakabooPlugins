@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
@@ -13,17 +15,19 @@ import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
 public class SimpleHDF5FileFormat implements FileFormat {
 
-	private List<String> dataPaths;
+	private Function<List<Path>, List<String>> dataPathFunction;
 	private String formatName, formatDescription;
 	
 	public SimpleHDF5FileFormat(String dataPath, String formatName, String formatDescription) {
-		this.dataPaths = Collections.singletonList(dataPath);
-		this.formatName = formatName;
-		this.formatDescription = formatDescription;
+		this(Collections.singletonList(dataPath), formatName, formatDescription);
+	}
+
+	public SimpleHDF5FileFormat(List<String> dataPaths, String formatName, String formatDescription) {
+		this((path) -> dataPaths, formatName, formatDescription);
 	}
 	
-	public SimpleHDF5FileFormat(List<String> dataPaths, String formatName, String formatDescription) {
-		this.dataPaths = dataPaths;
+	public SimpleHDF5FileFormat(Function<List<Path>, List<String>> dataPaths, String formatName, String formatDescription) {
+		this.dataPathFunction = dataPaths;
 		this.formatName = formatName;
 		this.formatDescription = formatDescription;
 	}
@@ -35,6 +39,10 @@ public class SimpleHDF5FileFormat implements FileFormat {
 
 	public FileFormatCompatibility compatibility(Path path) {
 		try (IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile())) {
+			List<String> dataPaths = dataPathFunction.apply(Collections.singletonList(path));
+			if (dataPaths.size() == 0) {
+				return FileFormatCompatibility.NO;
+			}
 			for (String dataPath : dataPaths) {
 				reader.getDataSetInformation(dataPath);
 			}

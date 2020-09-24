@@ -24,19 +24,29 @@ import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
 	private SimpleScanData scandata;
-	private DataSize dataSize;
+	protected DataSize dataSize;
 	private LoaderQueue queue;
 	
 	
 	private String name, description;
+	/**
+	 * This is the official set of data paths as determined by the
+	 * dataPaths or dataPathsFunction provided. It will become available
+	 * (ie non-null) before calls to readFile. 
+	 */
 	protected List<String> dataPaths;
+	/**
+	 * If the dataPathPreset is provided with the constructor, the default
+	 * implementation of getDataPaths will return it
+	 */
+	private String dataPathPreset = null;
 	
 	public SimpleHDF5DataSource(String dataPath, String name, String description) {
-		this(Collections.singletonList(dataPath), name, description);
+		this(name, description);
+		this.dataPathPreset = dataPath;
 	}
-
-	public SimpleHDF5DataSource(List<String> dataPaths, String name, String description) {
-		this.dataPaths = dataPaths;
+	
+	public SimpleHDF5DataSource(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}
@@ -58,18 +68,24 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
 	@Override
 	public FileFormat getFileFormat() {
-		return new SimpleHDF5FileFormat(dataPaths, name, description);
+		return new SimpleHDF5FileFormat(this::getDataPaths, name, description);
 	}
 
 
 	@Override
 	public void read(List<Path> paths) throws Exception {
-		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
+		String datasetName = paths.get(0).getParent().getFileName().toString();
+		if (paths.size() == 1) {
+			datasetName = paths.get(0).getFileName().toString();
+		}
+		scandata = new SimpleScanData(datasetName);
 		
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
+		Path firstPath = paths.get(0);
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(firstPath.toFile());
+		dataPaths = getDataPaths(paths);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		dataSize = getDataSize(paths, info);
-		getInteraction().notifyScanCount(dataSize.getDataDimensions().x * dataSize.getDataDimensions().y);
+		getInteraction().notifyScanCount(dataSize.size());
 
 
 		queue = scandata.createLoaderQueue(1000);
@@ -108,5 +124,13 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	
 	protected abstract void readFile(Path path, int filenum) throws Exception;
 	protected abstract DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo);
+	
+	//TODO: make this mandatory (abstract) -- no default implementation
+	protected List<String> getDataPaths(List<Path> paths) {
+		if (dataPathPreset != null) {
+			return Collections.singletonList(dataPathPreset);
+		}
+		throw new IllegalStateException("Data path not provided with constructor and getDataPaths not overridden");
+	}
 
 }
