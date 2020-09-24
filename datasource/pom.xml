@@ -29,6 +29,7 @@
 		<module>Raw</module>
 		<module>ClsCmcf</module>
 		<module>CHESS</module>
+		<module>Horiba5200</module>
 	</modules>
 
 	<build>
