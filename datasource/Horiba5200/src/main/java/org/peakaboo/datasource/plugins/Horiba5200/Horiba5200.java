@@ -1,6 +1,8 @@
 package org.peakaboo.datasource.plugins.Horiba5200;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -33,7 +35,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 
 	@Override
 	public String pluginVersion() {
-		return "0.1";
+		return "0.2";
 	}
 
 	@Override
@@ -92,7 +94,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	private Spectrum readSingle(Path path, int channels) throws IOException {
 		Spectrum s = new ISpectrum(channels);
 		int index = 0;
-		List<String> lines = Files.readAllLines(path);
+		List<String> lines = readlines(path);
 		for (String line : lines) {
 			//skip over the properties
 			if (!isNumeric(line)) { continue; }
@@ -104,7 +106,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	
 	private Map<String, String> getProperties(Path path) throws IOException {
 		//read the header until we hit numbers
-		List<String> lines = Files.readAllLines(path);
+		List<String> lines = readlines(path);
 		Map<String, String> properties = new HashMap<>();
 		for (String line : lines) {
 			if (isNumeric(line)) { break; }
@@ -134,6 +136,11 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		return Integer.parseInt(str.trim());
 	}
 
+	private List<String> readlines(Path path) throws IOException {
+		//Best guess these files are using the Latin-1 aka CP1252 aka windows-1252
+		//encoding to encode greek letters
+		return Files.readAllLines(path, Charset.forName("windows-1252"));
+	}
 	
 	
 	/*
@@ -150,7 +157,6 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		Path first = filenames.get(0);
 		try {
 			Map<String, String> properties = getProperties(first);
-			System.out.println(properties.keySet());
 			if (!properties.containsKey("Label")) { return FileFormatCompatibility.NO; }
 			if (!properties.containsKey("Date")) { return FileFormatCompatibility.NO; }
 			if (!properties.containsKey("Path")) { return FileFormatCompatibility.NO; }
