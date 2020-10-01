@@ -1,6 +1,5 @@
 package org.peakaboo.datasource.plugins.Horiba5200;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -25,8 +24,8 @@ import org.peakaboo.framework.cyclops.Spectrum;
 
 public class Horiba5200 extends AbstractDataSource implements FileFormat {
 
-	private static final String NAME = "Horiba 5200";
-	private static final String DESC = "Horiba 5200 micro-XRF Data";
+	private static final String NAME = "Horiba XGT-5200";
+	private static final String DESC = "Horiba XGT-5200 micro-XRF Data";
 	
 	private SimpleScanData scandata;
 	
@@ -163,7 +162,6 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 			if (!properties.containsKey("Num. of ch")) { return FileFormatCompatibility.NO; }
 			return FileFormatCompatibility.YES_BY_CONTENTS;
 		} catch (IOException e) {
-			e.printStackTrace();
 			return FileFormatCompatibility.NO;
 		}
 	}
