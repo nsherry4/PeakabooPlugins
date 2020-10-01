@@ -88,29 +88,33 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		}
 		
 		long[] bounds = yIndex == -1 ? new long[] {0, 0} : new long[] {0, 0, 0};
-			for (int y = 0; y < height; y++) {
-				for (int x = 0; x < width; x++) {
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				
+				int index = (y*width+x);
+				Spectrum agg = new ISpectrum(channels);
+				for (String dataPath : dataPaths) {
 					
-					int index = (y*width+x);
-					Spectrum agg = new ISpectrum(channels);
-					for (String dataPath : dataPaths) {
-						
-						//read scan
-						if (yIndex > -1) { bounds[yIndex] = y; }
+					//read scan
+					if (yIndex > -1) { 
+						bounds[yIndex] = y;
 						bounds[xIndex] = x;
-						bounds[zIndex] = 0;
-						MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
-						//get a temporary spectrum that uses the flatarray result as a backing array
-						Spectrum scan = new ISpectrum(mdarray.getAsFlatArray(), true);
-						//deadtime correction
-						SpectrumCalculations.divideBy_inplace(scan, livetimes.get(dataPath).get(index));
-						//add scan to aggregate
-						SpectrumCalculations.addLists_inplace(agg, scan);
+					} else {
+						bounds[xIndex] = y*width+x;
 					}
-					super.submitScan(index, agg);
-					
+					bounds[zIndex] = 0;
+					MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
+					//get a temporary spectrum that uses the flatarray result as a backing array
+					Spectrum scan = new ISpectrum(mdarray.getAsFlatArray(), true);
+					//deadtime correction
+					SpectrumCalculations.divideBy_inplace(scan, livetimes.get(dataPath).get(index));
+					//add scan to aggregate
+					SpectrumCalculations.addLists_inplace(agg, scan);
 				}
+				super.submitScan(index, agg);
+				
 			}
+		}
 
 		
 		readMatrixMetadata(reader, channels);
