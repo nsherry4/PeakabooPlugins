@@ -74,10 +74,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
 	@Override
 	public void read(List<Path> paths) throws Exception {
-		String datasetName = paths.get(0).getParent().getFileName().toString();
-		if (paths.size() == 1) {
-			datasetName = paths.get(0).getFileName().toString();
-		}
+		String datasetName = getDatasetTitle(paths);
 		scandata = new SimpleScanData(datasetName);
 		
 		Path firstPath = paths.get(0);
@@ -120,6 +117,14 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	@Override
 	public Optional<DataSize> getDataSize() {
 		return Optional.of(dataSize);
+	}
+	
+	protected String getDatasetTitle(List<Path> paths) {
+		String title = paths.get(0).getParent().getFileName().toString();
+		if (paths.size() == 1) {
+			title = paths.get(0).getFileName().toString();
+		}
+		return title;
 	}
 	
 	protected abstract void readFile(Path path, int filenum) throws Exception;

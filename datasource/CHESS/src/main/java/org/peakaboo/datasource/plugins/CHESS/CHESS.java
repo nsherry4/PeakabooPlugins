@@ -147,12 +147,22 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 			String dir = dataPath.substring(0, dataPath.lastIndexOf("/"));
 			String deadtimePath = dir + "/dead_time";
 			float[] deadtimeArray = reader.readFloatArray(deadtimePath);
-			//Stores deadtime as percent, need to scale to 0.0-1.0
+			//TODO: confirm this assumption
+			//Stores deadtime as percent 0-100, need to scale to 0.0-1.0
 			Spectrum deadtimes = new ISpectrum(deadtimeArray, true);
 			SpectrumCalculations.divideBy_inplace(deadtimes, 100f);
 			return deadtimes;
 		} else {
 			return super.getDeadtimes(dataPath, reader);
+		}
+	}
+	
+	@Override
+	protected String getDatasetTitle(List<Path> paths) {
+		if (root.getPossibleValues().size() <= 1) {
+			return super.getDatasetTitle(paths);
+		} else {
+			return super.getDatasetTitle(paths) + " - Dataset " + root.getValue();
 		}
 	}
 	
