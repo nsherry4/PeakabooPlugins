@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
+import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
@@ -34,8 +35,11 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	private SelectionParameter<Axis> spectrumAxis;
 	private Group pathGroup, axisGroup, topGroup;
 	
+	private static final String DS_NAME = "Universal HDF5 Datasource";
+	private static final String DS_DESC = "A (nearly) universal HDF5 datasource that allows users to specify how to read the data";
+	
 	public UniversalHDF5DataSource() {
-		super("Universal HDF5 Datasource", "A (nearly) universal HDF5 datasource that allows users to specify how to read the data");
+		super(DS_NAME, DS_DESC);
 	}
 	
 	private void initialize(List<Path> paths) {
@@ -169,7 +173,7 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	
 	@Override
 	public FileFormat getFileFormat() {
-		return new UniversalHDF5DFileFormat();
+		return new SimpleFileFormat(false, DS_NAME, DS_DESC, new String[] {"h5", "hdf5"});
 	}
 	
 	@Override
