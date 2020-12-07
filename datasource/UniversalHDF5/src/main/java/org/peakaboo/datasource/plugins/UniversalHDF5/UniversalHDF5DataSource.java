@@ -48,16 +48,17 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		
 		path = new SelectionParameter<String>("Path", new DropDownStyle<String>(), datasetPaths.get(0));
 		path.setPossibleValues(datasetPaths);
-		
 		pathinfo = new Parameter<String>("Path Information", new LabelStyle(), getPathInfo(mdreader, datasetPaths.get(0)));
-		
 		path.getValueHook().addListener(newpath -> {
 			pathinfo.setValue(getPathInfo(mdreader, newpath));
+			Axis bestGuess = bestSpectrumAxis(mdreader, datasetPaths.get(0));
+			spectrumAxis.setValue(bestGuess);
 		});
 		
-		spectrumAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Spectrum Axis", new DropDownStyle<>(), Axis.X, new EnumClassInfo<>(Axis.class), this::validator);
-		widthAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Width Axis", new DropDownStyle<>(), Axis.None, new EnumClassInfo<>(Axis.class), this::validator);
-		heightAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Height Axis", new DropDownStyle<>(), Axis.None, new EnumClassInfo<>(Axis.class), this::validator);
+		Axis[] axesGuess = matchAxes(mdreader, datasetPaths.get(0));
+		spectrumAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Spectrum Axis", new DropDownStyle<>(), axesGuess[0], new EnumClassInfo<>(Axis.class), this::validator);
+		widthAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Width Axis", new DropDownStyle<>(), axesGuess[1], new EnumClassInfo<>(Axis.class), this::validator);
+		heightAxis = new SelectionParameter<UniversalHDF5DataSource.Axis>("Height Axis", new DropDownStyle<>(), axesGuess[2], new EnumClassInfo<>(Axis.class), this::validator);
 		
 		spectrumAxis.setPossibleValues(Axis.values());
 		widthAxis.setPossibleValues(Axis.values());
@@ -99,15 +100,11 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	private List<String> listDatasets(IHDF5SimpleReader mdreader) {
 		List<String> datasets = listDatasets(mdreader, "/");
 		
-		Comparator<String> scorer = new Comparator<String>() {
-
-			@Override
-			public int compare(String o1, String o2) {
-				float s1 = scoreDataset(mdreader, o1);
-				float s2 = scoreDataset(mdreader, o2);
-				//backwards comparison to higher scores are first
-				return Float.compare(s2, s1);
-			}
+		Comparator<String> scorer = (String o1, String o2) -> {
+			float s1 = scoreDataset(mdreader, o1);
+			float s2 = scoreDataset(mdreader, o2);
+			//backwards comparison to higher scores are first
+			return Float.compare(s2, s1);
 		};
 		datasets.sort(scorer);
 		return datasets;
@@ -134,6 +131,64 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 			return leaves;
 		}
 		
+	}
+	
+	private Axis[] matchAxes(IHDF5SimpleReader mdreader, String path) {
+		HDF5DataSetInformation info = mdreader.getDataSetInformation(path);
+		List<Axis> axes = new ArrayList<>();
+		
+		//best guess for spectrum axis goes first
+		Axis spectrum = bestSpectrumAxis(mdreader, path);
+		axes.add(spectrum);
+		
+		for (Axis a : Axis.values()) {
+			if (axes.size() >= 3) { break; }
+			if (axes.size() >= info.getRank()) { axes.add(Axis.None); }
+			//skip axes already in the list
+			if (axes.contains(a)) { continue; }
+			axes.add(a);
+		}
+		
+		return axes.toArray(new Axis[] {});
+	}
+	
+	//scores each axis as the potential spectrum axis, returns the best 
+	private Axis bestSpectrumAxis(IHDF5SimpleReader mdreader, String path) {
+		List<Axis> axes = new ArrayList<>(Arrays.asList(Axis.values()));
+		Comparator<Axis> scorer = (Axis a1, Axis a2) -> {
+			float s1 = scoreSpectrumAxis(mdreader, path, a1.ordinal());
+			float s2 = scoreSpectrumAxis(mdreader, path, a2.ordinal());
+			//backwards comparison to higher scores are first
+			return Float.compare(s2, s1);
+		};
+		axes.sort(scorer);
+		return axes.get(0);
+	}
+	
+	//scores an axis based on the likelihood that it is the spectrum axis 
+	private float scoreSpectrumAxis(IHDF5SimpleReader mdreader, String path, int axis) {
+		HDF5DataSetInformation info = mdreader.getDataSetInformation(path);
+		float score = 1f;
+		
+		
+		long[] dims = info.getDimensions();
+		if (axis >= info.getRank()) { return 0f; }
+		long dim = dims[axis];
+		if (!isPowerOfTwo(dim)) {
+			score *= 0.1f;
+		}
+		
+		float sizeScore = 1f -  Math.abs(2048f-(float)dim) / 2048f;
+		if (sizeScore < 0.1f) {
+			sizeScore = 0.1f;
+		}
+		if (sizeScore > 1f) {
+			sizeScore = 1f;
+		}
+		score *= sizeScore;
+		
+		
+		return score;
 	}
 	
 	private float scoreDataset(IHDF5SimpleReader mdreader, String path) {
