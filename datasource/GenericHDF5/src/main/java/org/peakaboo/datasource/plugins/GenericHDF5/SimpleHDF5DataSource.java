@@ -77,8 +77,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 		String datasetName = getDatasetTitle(paths);
 		scandata = new SimpleScanData(datasetName);
 		
-		Path firstPath = paths.get(0);
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(firstPath.toFile());
+		IHDF5SimpleReader reader = getMetadataReader(paths);
 		dataPaths = getDataPaths(paths);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		dataSize = getDataSize(paths, info);
@@ -125,6 +124,12 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 			title = paths.get(0).getFileName().toString();
 		}
 		return title;
+	}
+	
+	protected IHDF5SimpleReader getMetadataReader(List<Path> paths) {
+		Path firstPath = paths.get(0);
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(firstPath.toFile());
+		return reader;
 	}
 	
 	protected abstract void readFile(Path path, int filenum) throws Exception;

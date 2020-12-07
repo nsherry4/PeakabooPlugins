@@ -28,34 +28,47 @@ import ch.systemsx.cisd.hdf5.IHDF5Reader;
  */
 public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 
+	private String axisOrder;
 	private int xIndex = -1;
 	private int yIndex = -1;
 	private int zIndex = -1;
 	
+	
 	public FloatMatrixHDF5DataSource(String axisOrder, String dataPath, String name, String description) {
 		super(dataPath, name, description);
-		readAxisOrder(axisOrder);
+		this.axisOrder = axisOrder;
 	}
 
 	public FloatMatrixHDF5DataSource(String axisOrder, String name, String description) {
 		super(name, description);
-		readAxisOrder(axisOrder);
+		this.axisOrder = axisOrder;
 	}
 	
-	private void readAxisOrder(String axisOrder) {
+	protected FloatMatrixHDF5DataSource(String name, String description) {
+		super(name, description);
+	}
+	
+	private void readAxisOrder() {
 		//X and Y represent x and y positions on a raster scan/map
 		//Z represents channels in a single scan
-		axisOrder = axisOrder.toLowerCase();
-		xIndex = axisOrder.indexOf("x");
-		yIndex = axisOrder.indexOf("y");
-		zIndex = axisOrder.indexOf("z");
+		String order = getAxisOrder().toLowerCase();
+		xIndex = order.indexOf("x");
+		yIndex = order.indexOf("y");
+		zIndex = order.indexOf("z");
 	}
 
+	@Override
+	public void read(List<Path> paths) throws Exception {
+		readAxisOrder();
+		super.read(paths);
+	}
+	
 	@Override
 	protected void readFile(Path path, int filenum) throws Exception {
 		if (filenum > 0) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
+		
 
 		IHDF5Reader reader = getReader(path);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
@@ -144,5 +157,8 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	
 	protected Spectrum getDeadtimes(String dataPath, IHDF5Reader reader) {
 		return new ISpectrum(dataSize.size(), 0f);
+	}
+	protected String getAxisOrder() {
+		return axisOrder;
 	}
 }
