@@ -10,8 +10,6 @@ import java.util.Optional;
 
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
-import org.peakaboo.datasource.plugins.UserDrivenHDF5.UserDrivenHDF5DFileFormat;
-import org.peakaboo.datasource.plugins.UserDrivenHDF5.UserDrivenHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.SelectionParameter;
@@ -171,7 +169,7 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	
 	@Override
 	public FileFormat getFileFormat() {
-		return new UserDrivenHDF5DFileFormat();
+		return new UniversalHDF5DFileFormat();
 	}
 	
 	@Override
