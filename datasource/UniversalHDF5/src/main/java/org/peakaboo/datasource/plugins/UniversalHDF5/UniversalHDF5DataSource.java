@@ -35,7 +35,7 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	private Group pathGroup, axisGroup, topGroup;
 	
 	public UniversalHDF5DataSource() {
-		super("Generic HDF5 Datasource", "A generic HDF5 datasource that allows users to select the data to open");
+		super("Universal HDF5 Datasource", "A (nearly) universal HDF5 datasource that allows users to specify how to read the data");
 	}
 	
 	private void initialize(List<Path> paths) {
