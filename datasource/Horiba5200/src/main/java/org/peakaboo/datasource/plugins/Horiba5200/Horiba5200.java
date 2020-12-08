@@ -135,6 +135,9 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		return Integer.parseInt(str.trim());
 	}
 
+	/*
+	 * readlines reads the entire file at once, making the assumption that this file is meant for this plugin
+	 */
 	private List<String> readlines(Path path) throws IOException {
 		//Best guess these files are using the Latin-1 aka CP1252 aka windows-1252
 		//encoding to encode greek letters
@@ -154,6 +157,14 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	@Override
 	public FileFormatCompatibility compatibility(List<Path> filenames) {
 		Path first = filenames.get(0);
+		try {
+			//first, reject files larger than 1MB
+			if (Files.size(first) > 1000000) {
+				return FileFormatCompatibility.NO;
+			}
+		} catch (IOException e1) {
+			return FileFormatCompatibility.NO;
+		}
 		try {
 			Map<String, String> properties = getProperties(first);
 			if (!properties.containsKey("Label")) { return FileFormatCompatibility.NO; }
