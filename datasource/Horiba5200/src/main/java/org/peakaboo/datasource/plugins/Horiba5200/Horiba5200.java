@@ -156,23 +156,21 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 
 	@Override
 	public FileFormatCompatibility compatibility(List<Path> filenames) {
-		Path first = filenames.get(0);
 		try {
+			Path first = filenames.get(0);
 			//first, reject files larger than 1MB
 			if (Files.size(first) > 1000000) {
 				return FileFormatCompatibility.NO;
 			}
-		} catch (IOException e1) {
-			return FileFormatCompatibility.NO;
-		}
-		try {
+		
 			Map<String, String> properties = getProperties(first);
 			if (!properties.containsKey("Label")) { return FileFormatCompatibility.NO; }
 			if (!properties.containsKey("Date")) { return FileFormatCompatibility.NO; }
 			if (!properties.containsKey("Path")) { return FileFormatCompatibility.NO; }
 			if (!properties.containsKey("Num. of ch")) { return FileFormatCompatibility.NO; }
 			return FileFormatCompatibility.YES_BY_CONTENTS;
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.out.println("caught");
 			return FileFormatCompatibility.NO;
 		}
 	}

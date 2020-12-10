@@ -173,20 +173,28 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		
 		long[] dims = info.getDimensions();
 		if (axis >= info.getRank()) { return 0f; }
+		
+		//penalty for not being a power of 2
 		long dim = dims[axis];
 		if (!isPowerOfTwo(dim)) {
 			score *= 0.1f;
 		}
 		
-		float sizeScore = 1f -  Math.abs(2048f-(float)dim) / 2048f;
-		if (sizeScore < 0.1f) {
-			sizeScore = 0.1f;
-		}
-		if (sizeScore > 1f) {
-			sizeScore = 1f;
-		}
-		score *= sizeScore;
 		
+		
+		// view on wolfram alpha with
+		// f(x) = ((ln(x)/ln(2))^12/2^41) * exp(-(x-2048)^2/(2*2048^2)) from -1024 to 8192
+		float power = 0;
+		power = (float) (Math.log(dim)/Math.log(2));			
+		power = (float) Math.pow(power, 12f); //scaling factor
+		power /= Math.pow(2, 42); //gets dim=2048 back down to around 1
+		
+		float gaussian = 0f;
+		gaussian = (float) Math.exp(  -Math.pow(dim-2048, 2)  /  (2*Math.pow(2048, 2))  );
+		
+		score *= power * gaussian;
+		
+		System.out.println("dim = " + dim + ", score = " + score);
 		
 		return score;
 	}
