@@ -8,13 +8,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
+import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.SelectionParameter;
 import org.peakaboo.framework.autodialog.model.classinfo.EnumClassInfo;
+import org.peakaboo.framework.autodialog.model.style.editors.BooleanStyle;
+import org.peakaboo.framework.autodialog.model.style.editors.CheckBoxStyle;
 import org.peakaboo.framework.autodialog.model.style.editors.DropDownStyle;
 import org.peakaboo.framework.autodialog.model.style.editors.LabelStyle;
 import org.peakaboo.framework.autodialog.model.style.layouts.FramedLayoutStyle;
@@ -34,6 +38,7 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	private SelectionParameter<Axis> heightAxis;
 	private SelectionParameter<Axis> spectrumAxis;
 	private Group pathGroup, axisGroup, topGroup;
+	private Parameter<Boolean> optNoDims;
 	
 	private static final String DS_NAME = "Universal HDF5 Datasource";
 	private static final String DS_DESC = "A (nearly) universal HDF5 datasource that allows users to specify how to read the data";
@@ -41,6 +46,16 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	public UniversalHDF5DataSource() {
 		super(DS_NAME, DS_DESC);
 	}
+	
+	@Override
+	public Optional<DataSize> getDataSize() {
+		if (optNoDims.getValue()) {
+			return Optional.empty();
+		} else {
+			return Optional.of(dataSize);
+		}
+	}
+	
 	
 	private void initialize(List<Path> paths) {
 		IHDF5SimpleReader mdreader = super.getMetadataReader(paths);
@@ -51,8 +66,10 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		pathinfo = new Parameter<String>("Path Information", new LabelStyle(), getPathInfo(mdreader, datasetPaths.get(0)));
 		path.getValueHook().addListener(newpath -> {
 			pathinfo.setValue(getPathInfo(mdreader, newpath));
-			Axis bestGuess = bestSpectrumAxis(mdreader, datasetPaths.get(0));
-			spectrumAxis.setValue(bestGuess);
+			Axis[] axesGuess = matchAxes(mdreader, newpath);
+			spectrumAxis.setValue(axesGuess[0]);
+			widthAxis.setValue(axesGuess[1]);
+			heightAxis.setValue(axesGuess[2]);
 		});
 		
 		Axis[] axesGuess = matchAxes(mdreader, datasetPaths.get(0));
@@ -64,8 +81,10 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		widthAxis.setPossibleValues(Axis.values());
 		heightAxis.setPossibleValues(Axis.values());
 		
+		optNoDims = new Parameter<Boolean>("Don't infer map dimensions", new BooleanStyle(), false);
+		
 		pathGroup = new Group("Dataset Path", Arrays.asList(path, pathinfo), new FramedLayoutStyle());
-		axisGroup = new Group("Data Matrix Layout", Arrays.asList(spectrumAxis, widthAxis, heightAxis), new FramedLayoutStyle());
+		axisGroup = new Group("Data Matrix Layout", Arrays.asList(spectrumAxis, widthAxis, heightAxis, optNoDims), new FramedLayoutStyle());
 		topGroup = new Group("HDF5 Parameters", pathGroup, axisGroup);
 	}
 	
@@ -193,9 +212,7 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		gaussian = (float) Math.exp(  -Math.pow(dim-2048, 2)  /  (2*Math.pow(2048, 2))  );
 		
 		score *= power * gaussian;
-		
-		System.out.println("dim = " + dim + ", score = " + score);
-		
+
 		return score;
 	}
 	
@@ -236,7 +253,15 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 	
 	@Override
 	public FileFormat getFileFormat() {
-		return new SimpleFileFormat(false, DS_NAME, DS_DESC, new String[] {"h5", "hdf5"});
+		return new SimpleFileFormat(false, DS_NAME, DS_DESC, new String[] {"h5", "hdf5"}) {
+			@Override
+			public FileFormatCompatibility compatibility(List<Path> filenames) {
+				IHDF5SimpleReader mdreader = UniversalHDF5DataSource.super.getMetadataReader(filenames);
+				List<String> datasetPaths = listDatasets(mdreader);
+				if (datasetPaths.isEmpty()) { return FileFormatCompatibility.NO; }
+				return super.compatibility(filenames);
+			}
+		};
 	}
 	
 	@Override
