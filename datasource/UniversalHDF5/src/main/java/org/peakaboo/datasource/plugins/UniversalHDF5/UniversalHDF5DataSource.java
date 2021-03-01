@@ -256,10 +256,19 @@ public class UniversalHDF5DataSource extends FloatMatrixHDF5DataSource {
 		return new SimpleFileFormat(false, DS_NAME, DS_DESC, new String[] {"h5", "hdf5"}) {
 			@Override
 			public FileFormatCompatibility compatibility(List<Path> filenames) {
-				IHDF5SimpleReader mdreader = UniversalHDF5DataSource.super.getMetadataReader(filenames);
-				List<String> datasetPaths = listDatasets(mdreader);
-				if (datasetPaths.isEmpty()) { return FileFormatCompatibility.NO; }
-				return super.compatibility(filenames);
+				FileFormatCompatibility fromSuper = super.compatibility(filenames);
+				if (fromSuper == FileFormatCompatibility.NO) { return fromSuper; }
+				
+				try {
+					//extra tests to reject HDF5 files that don't contain any promising values
+					IHDF5SimpleReader mdreader = UniversalHDF5DataSource.super.getMetadataReader(filenames);
+					List<String> datasetPaths = listDatasets(mdreader);
+					if (datasetPaths.isEmpty()) { return FileFormatCompatibility.NO; }
+				} catch (Exception e) {
+					return FileFormatCompatibility.NO;
+				}
+				
+				return fromSuper;
 			}
 		};
 	}
