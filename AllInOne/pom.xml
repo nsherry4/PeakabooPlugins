@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>org.peakaboo</groupId>
 			<artifactId>libpeakaboo</artifactId>
-			<version>5.4-SNAPSHOT</version>
+			<version>5.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.peakaboo.plugins</groupId>
