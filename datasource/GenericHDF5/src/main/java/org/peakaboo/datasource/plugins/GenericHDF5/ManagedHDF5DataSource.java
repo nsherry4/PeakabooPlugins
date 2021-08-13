@@ -4,12 +4,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
+
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
-import org.peakaboo.framework.cyclops.ISpectrum;
-import org.peakaboo.framework.cyclops.Spectrum;
 
 public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 

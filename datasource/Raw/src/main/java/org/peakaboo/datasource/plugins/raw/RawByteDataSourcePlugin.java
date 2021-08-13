@@ -19,13 +19,12 @@ import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.filter.model.Filter;
 import org.peakaboo.filter.plugins.noise.WeightedAverageNoiseFilter;
-
-import org.peakaboo.framework.cyclops.ISpectrum;
-import org.peakaboo.framework.cyclops.ReadOnlySpectrum;
-import org.peakaboo.framework.cyclops.Spectrum;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.style.editors.IntegerSpinnerStyle;
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ReadOnlySpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 public class RawByteDataSourcePlugin extends AbstractDataSource {
 

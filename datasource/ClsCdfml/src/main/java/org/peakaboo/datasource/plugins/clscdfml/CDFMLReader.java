@@ -18,12 +18,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.peakaboo.framework.cyclops.ISpectrum;
 import org.peakaboo.framework.cyclops.Pair;
 import org.peakaboo.framework.cyclops.Range;
 import org.peakaboo.framework.cyclops.SparsedList;
-import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 
 public abstract class CDFMLReader extends DefaultHandler2

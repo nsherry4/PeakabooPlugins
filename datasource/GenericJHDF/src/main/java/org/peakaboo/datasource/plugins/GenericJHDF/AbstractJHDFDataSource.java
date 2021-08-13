@@ -18,7 +18,7 @@ import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
-import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 import io.jhdf.HdfFile;
 import io.jhdf.api.Dataset;

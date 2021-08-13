@@ -31,9 +31,9 @@ import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.vespers.data.converter.AbstractMapXYVespersConverter;
 import org.peakaboo.framework.cyclops.Bounds;
 import org.peakaboo.framework.cyclops.Coord;
-import org.peakaboo.framework.cyclops.ISpectrum;
 import org.peakaboo.framework.cyclops.SISize;
-import org.peakaboo.framework.cyclops.Spectrum;
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.autodialog.model.Group;
 
 /**

@@ -13,8 +13,8 @@ import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
 import org.peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5DataSource;
 import org.peakaboo.framework.cyclops.Coord;
-import org.peakaboo.framework.cyclops.ISpectrum;
 import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 
 import ch.systemsx.cisd.base.mdarray.MDFloatArray;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
