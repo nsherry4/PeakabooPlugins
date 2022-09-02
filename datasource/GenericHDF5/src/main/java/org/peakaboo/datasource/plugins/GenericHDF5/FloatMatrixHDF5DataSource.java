@@ -1,13 +1,14 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 
+import org.peakaboo.common.PeakabooConfiguration;
+import org.peakaboo.common.PeakabooConfiguration.MemorySize;
 import org.peakaboo.datasource.model.DataSource;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
@@ -33,6 +34,9 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	private int yIndex = -1;
 	private int zIndex = -1;
 	
+	private static final int BLOCK_READ_SIZE = 	PeakabooConfiguration.memorySize == MemorySize.TINY ? 10 : 
+												PeakabooConfiguration.memorySize == MemorySize.SMALL ? 25 : 
+												PeakabooConfiguration.memorySize == MemorySize.MEDIUM ? 100 : 200;
 	
 	public FloatMatrixHDF5DataSource(String axisOrder, String dataPath, String name, String description) {
 		super(dataPath, name, description);
@@ -69,7 +73,7 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
 		
-
+		
 		IHDF5Reader reader = getReader(path);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
 		int channels = (int) info.getDimensions()[zIndex];
@@ -100,31 +104,78 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 			livetimes.put(dataPath, livetime);
 		}
 		
-		long[] bounds = yIndex == -1 ? new long[] {0, 0} : new long[] {0, 0, 0};
+		
+		
+		long[] offset = yIndex == -1 ? new long[] {0, 0} : new long[] {0, 0, 0};
 		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
+			for (int x = 0; x < width;) {
+				if (super.getInteraction().checkReadAborted()) { return; }
 				
 				int index = (y*width+x);
-				Spectrum agg = new ISpectrum(channels);
-				for (String dataPath : dataPaths) {
-					
-					//read scan
-					if (yIndex > -1) { 
-						bounds[yIndex] = y;
-						bounds[xIndex] = x;
-					} else {
-						bounds[xIndex] = y*width+x;
-					}
-					bounds[zIndex] = 0;
-					MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, bounds);
-					//get a temporary spectrum that uses the flatarray result as a backing array
-					Spectrum scan = new ISpectrum(mdarray.getAsFlatArray(), true);
-					//deadtime correction
-					SpectrumCalculations.divideBy_inplace(scan, livetimes.get(dataPath).get(index));
-					//add scan to aggregate
-					SpectrumCalculations.addLists_inplace(agg, scan);
+
+				//Initialize aggregate spectra, we will read from each data path and sum the results into the aggregate
+				List<Spectrum> aggs = new ArrayList<>();
+				for (int i  = 0; i < BLOCK_READ_SIZE; i++) {
+					aggs.add(new ISpectrum(channels));
 				}
-				super.submitScan(index, agg);
+				
+				//read scan
+				if (yIndex > -1) { 
+					offset[yIndex] = y;
+					offset[xIndex] = x;
+				} else {
+					offset[xIndex] = y*width+x;
+				}
+				offset[zIndex] = 0;
+				
+				
+				//For block reads, we try to read more than one scan in a row
+				range[xIndex] = blockReadSize(x, width);
+				
+				for (String dataPath : dataPaths) {
+
+					
+					
+				    /*
+				     * Reads a block from a multi-dimensional <code>float</code> array from the data set 
+				     * <var>objectPath</var>.
+				     * 
+				     * @param objectPath The name (including path information) of the data set object in the file.
+				     * @param blockDimensions The extent of the block in each dimension.
+				     * @param blockNumber The block number in each dimension (offset: multiply with the
+				     *            <var>blockDimensions</var> in the according dimension).
+				     * @return The data block read from the data set.
+				     */
+					//MDFloatArray mdarray = floatreader.readMDArrayBlock(dataPath, range, offset);
+					
+					
+				    /*
+				     * Reads a block from a multi-dimensional <code>float</code> array from the data set
+				     * <var>objectPath</var>.
+				     * 
+				     * @param objectPath The name (including path information) of the data set object in the file.
+				     * @param blockDimensions The extent of the block in each dimension.
+				     * @param offset The offset in the data set to start reading from in each dimension.
+				     * @return The data block read from the data set.
+				     */
+					MDFloatArray mdarray = floatreader.readMDArrayBlockWithOffset(dataPath, range, offset);
+					List<Spectrum> spectra = floatsToSpectra(mdarray.getAsFlatArray(), channels);
+					
+					//For each spectrum returned, do some post-processing
+					for (int i = 0; i < spectra.size(); i++) {
+						Spectrum scan = spectra.get(i);
+						//deadtime correction
+						SpectrumCalculations.divideBy_inplace(scan, livetimes.get(dataPath).get(index + i));
+						//add scan to aggregate
+						SpectrumCalculations.addLists_inplace(aggs.get(i), scan);
+					}
+				}
+				for (int i = 0; i < aggs.size(); i++) {
+					super.submitScan(index + i, aggs.get(i));
+				}
+				
+				//Increment x manually here so that it always reflects the actual size of the read
+				x += range[xIndex];
 				
 			}
 		}
@@ -133,6 +184,34 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 		readMatrixMetadata(reader, channels);
 		
 	}
+
+
+	
+	/**
+	 * Given a float[] of length count*channels, return `count` Spectrum objects of length `channels`
+	 */
+	protected List<Spectrum> floatsToSpectra(float[] array, int channels) {
+		List<Spectrum> spectra = new ArrayList<>();
+		for (int i = 0; i < array.length; i+=channels) {
+			float[] spectrumData = Arrays.copyOfRange(array, i, i+channels);
+			Spectrum spectrum = new ISpectrum(spectrumData, false);
+			spectra.add(spectrum);
+		}
+		return spectra;
+	}
+	
+	
+	/**
+	 * Given the current position `x` in a row of scans and the width of the row,
+	 * calculate the size of the x component of the range array to be passed to
+	 * readMDArrayBlock.
+	 */
+	private int blockReadSize(int x, int width) {
+		int endx = Math.min(x + BLOCK_READ_SIZE, width);
+		return endx - x;
+		
+	}
+	
 	
 	@Override
 	protected final DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo) {
