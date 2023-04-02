@@ -2,9 +2,6 @@ package org.peakaboo.datasource.plugins.raw;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +10,9 @@ import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
-import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.filter.model.Filter;
 import org.peakaboo.filter.plugins.noise.WeightedAverageNoiseFilter;
@@ -31,7 +28,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 	Parameter<Integer> paramChannels;
 	Group parameters;
 	
-	SimpleScanData scandata;
+	PipelineScanData scandata;
 	
 	public RawByteDataSourcePlugin() {
 		paramChannels = new Parameter<Integer>("Channels per Spectrum", new IntegerSpinnerStyle(), 2048);
@@ -39,17 +36,17 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
-		if (paths.size() != 1) {
+	public Optional<Group> getParameters(List<DataFile> datafiles) {
+		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
-		Path path = paths.get(0);		
+		DataFile datafile = datafiles.get(0);		
 		
 		/*
 		 * We perform a kind of autocorrelation test to try and guess what the channel
 		 * count per spectrum is.
 		 */
-		ReadOnlySpectrum sample = smoothSample(loadSample(path, 65536));
+		ReadOnlySpectrum sample = smoothSample(loadSample(datafile, 65536));
 		if (sample != null) {
 			float bestScore = 0;
 			int bestPeriod = 2048;
@@ -67,10 +64,10 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 		return Optional.of(parameters);
 	}
 
-	private Spectrum loadSample(Path path, int size) {
+	private Spectrum loadSample(DataFile datafile, int size) {
 		
 		try {
-			BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ));
+			BufferedInputStream bis = new BufferedInputStream(datafile.getInputStream());
 			byte[] byteArray = new byte[size];
 			int bytesRead = bis.read(byteArray);
 			if (bytesRead != size) {
@@ -133,19 +130,18 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		if (paths.size() != 1) {
+	public void read(List<DataFile> datafiles) throws IOException, DataSourceReadException, InterruptedException {
+		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
-		Path path = paths.get(0);
+		DataFile datafile = datafiles.get(0);
 		int dataChannels = paramChannels.getValue();
 		
-		scandata = new SimpleScanData(path.getFileName().toString());
-		LoaderQueue queue = scandata.createLoaderQueue(100);
-		long size = Files.size(path);
+		scandata = new PipelineScanData(datafile.getBasename());
+		long size = datafile.size().orElse(0l);
 		getInteraction().notifyScanCount((int)(size / dataChannels));
 		
-		BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(path, StandardOpenOption.READ));
+		BufferedInputStream bis = new BufferedInputStream(datafile.getInputStream());
 		
 		
 		int count = 0;
@@ -162,7 +158,8 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 				asFloatArray[i] = byteArray[i];
 			}
 			
-			queue.submit(asFloatArray);
+			scandata.submit(new ISpectrum(asFloatArray));
+
 			count++;
 			if (count == 100) {
 				getInteraction().notifyScanRead(count);
@@ -171,13 +168,13 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 			
 		}
 		
-		queue.finish();
+		scandata.finish();
 		
 	}
 
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
 	}
 
 	@Override

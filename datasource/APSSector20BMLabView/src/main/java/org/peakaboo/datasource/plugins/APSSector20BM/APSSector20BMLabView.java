@@ -1,10 +1,9 @@
 package org.peakaboo.datasource.plugins.APSSector20BM;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +13,9 @@ import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
@@ -24,10 +24,10 @@ import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 
 public class APSSector20BMLabView extends AbstractDataSource {
 
-	private SimpleScanData scandata;
+	private PipelineScanData scandata;
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 
@@ -57,16 +57,16 @@ public class APSSector20BMLabView extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		if (paths.size() != 1) {
+	public void read(List<DataFile> datafiles) throws DataSourceReadException, IOException, InterruptedException {
+		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException("Expected exactly 1 file");
 		}
 		
-		Path path = paths.get(0);
+		DataFile datafile = datafiles.get(0);
 		
-		scandata = new SimpleScanData(path.getFileName().toString());
+		scandata = new PipelineScanData(datafile.getBasename());
 		
-		try (InputStream in = Files.newInputStream(path)) {
+		try (InputStream in = datafile.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			//search for the start of the data
 			while (true) {
@@ -100,9 +100,12 @@ public class APSSector20BMLabView extends AbstractDataSource {
 				channels.add(sum);
 			}
 			
-			scandata.add(new ISpectrum(channels));
+			scandata.submit(new ISpectrum(channels));
+
 			
 		}
+		
+		scandata.finish();
 		
 	}
 

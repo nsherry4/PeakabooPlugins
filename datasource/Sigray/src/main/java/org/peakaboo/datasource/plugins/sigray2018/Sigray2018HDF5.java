@@ -1,5 +1,6 @@
 package org.peakaboo.datasource.plugins.sigray2018;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,9 +12,11 @@ import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
 import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
@@ -27,13 +30,13 @@ import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 public class Sigray2018HDF5 extends AbstractDataSource {
 
-	private SimpleScanData scandata;
+	private PipelineScanData scandata;
 	private SimpleDataSize dataSize;
 
 
 	@Override
 	public String pluginVersion() {
-		return "1.3";
+		return "1.4";
 	}
 	
 	@Override
@@ -48,17 +51,11 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		String title = "";
-		if (paths.size() == 1) {
-			title = paths.get(0).getFileName().toString();
-		} else {
-			title = paths.get(0).getParent().getFileName().toString();
-		}
-		scandata = new SimpleScanData(title);
+	public void read(List<DataFile> paths) throws IOException, DataSourceReadException, InterruptedException {
+		scandata = new PipelineScanData(DataFile.getTitle(paths));
 		dataSize = new SimpleDataSize();
 		
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).toFile());
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(paths.get(0).getAndEnsurePath().toFile());
 		HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		long size[] = info.getDimensions();
 		int dx = (int) size[0];
@@ -68,24 +65,22 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		
 		dataSize.setDataHeight(paths.size());
 		dataSize.setDataWidth(dx);
-
-		LoaderQueue queue = scandata.createLoaderQueue(dz*2);
-		
+	
 		Comparator<String> comparitor = new AlphaNumericComparitor(); 
-		paths.sort((a, b) -> comparitor.compare(a.getFileName().toString(), b.getFileName().toString()));
-		for (Path path : paths) {
-			readRow(path, queue);
+		paths.sort((a, b) -> comparitor.compare(a.getFilename(), b.getFilename()));
+		for (DataFile path : paths) {
+			readRow(path);
 			if (getInteraction().checkReadAborted()) {
-				queue.finish();
+				scandata.finish();
 				return;
 			}
 		}
 		
-		queue.finish();
+		scandata.finish();
 	}
 
-	private void readRow(Path path, LoaderQueue queue) throws InterruptedException {
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
+	private void readRow(DataFile path) throws DataSourceReadException, IOException, InterruptedException {
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		long size[] = info.getDimensions();
 		int dx = (int) size[0];
@@ -100,7 +95,8 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis
 				Spectrum s = new ISpectrum(Arrays.copyOfRange(data1, index3(x, y, 0, dx, dy, dz), index3(x, y, dz, dx, dy, dz)), false);
-				queue.submit(s);
+				scandata.submit(s);
+
 			}
 			getInteraction().notifyScanRead(dx);
 		}
@@ -138,7 +134,7 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 

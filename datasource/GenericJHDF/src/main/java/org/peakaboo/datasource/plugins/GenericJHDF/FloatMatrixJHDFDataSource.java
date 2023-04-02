@@ -1,5 +1,6 @@
 package org.peakaboo.datasource.plugins.GenericJHDF;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
@@ -45,12 +47,12 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 	}
 	
 	@Override
-	protected void readFile(Path path, int filenum) throws Exception {
+	protected void readFile(DataFile path, int filenum) throws IOException, DataSourceReadException {
 		if (filenum > 0) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
 
-		try (HdfFile hdf = new HdfFile(path)) {
+		try (HdfFile hdf = new HdfFile(path.getAndEnsurePath())) {
 				
 			
 			Dataset firstDataset = hdf.getDatasetByPath(dataPaths.get(0));
@@ -101,7 +103,12 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 						SpectrumCalculations.addLists_inplace(agg, scan);
 						
 					}
-					super.submitScan(index, agg);
+					try {
+						super.submitScan(index, agg);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						throw new DataSourceReadException("Interrupted", e);
+					}
 					
 				}
 			}
@@ -114,7 +121,7 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 	}
 
 	@Override
-	protected DataSize getDataSize(List<Path> paths, Dataset firstDataset) {
+	protected DataSize getDataSize(List<DataFile> paths, Dataset firstDataset) {
 		SimpleDataSize size = new SimpleDataSize();
 		size.setDataHeight(yIndex == -1 ? 1 : (int) firstDataset.getDimensions()[yIndex]);
 		size.setDataWidth((int) firstDataset.getDimensions()[xIndex]);

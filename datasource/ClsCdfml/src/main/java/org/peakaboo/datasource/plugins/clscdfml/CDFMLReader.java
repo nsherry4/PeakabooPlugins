@@ -3,6 +3,7 @@ package org.peakaboo.datasource.plugins.clscdfml;
 import static java.util.stream.Collectors.toList;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +11,10 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import org.peakaboo.common.Version;
+import org.peakaboo.app.Version;
+import org.peakaboo.datasource.model.DataSource.DataSourceReadException;
 import org.peakaboo.datasource.model.PeakabooLists;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,7 +38,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 	
 	
 	private static final String ABORT_MESSAGE = "Aborted by User"; 
-	public String sourceFile;
+	DataFile sourceFile;
 	
 	private XMLReader									xr;
 
@@ -88,11 +91,10 @@ public abstract class CDFMLReader extends DefaultHandler2
 		super();
 	}
 	
-	public void read(String file, Supplier<Boolean> isAborted) throws Exception
+	public void read(DataFile file, Supplier<Boolean> isAborted) throws DataSourceReadException, IOException
 	{
-		
-		this.isAborted = isAborted;
 		this.sourceFile = file;
+		this.isAborted = isAborted;
 		
 		attrEntries = new HashMap<String, List<String>>();
 		variableEntries = new HashMap<String, List<?>>();
@@ -110,12 +112,12 @@ public abstract class CDFMLReader extends DefaultHandler2
 			xr.setContentHandler(this);
 			xr.setErrorHandler(this);
 
-			xr.parse(new InputSource(new FileInputStream(sourceFile)));
+			xr.parse(new InputSource(file.getInputStream()));
 
 		}
 		catch (SAXException e)
 		{
-			if (! e.getMessage().equals(ABORT_MESSAGE)) throw new Exception(e.getMessage());
+			if (! e.getMessage().equals(ABORT_MESSAGE)) throw new DataSourceReadException(e.getMessage());
 		}
 	}
 

@@ -4,15 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.peakaboo.common.PeakabooLog;
+import org.peakaboo.app.PeakabooLog;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.datasource.model.datafile.DataFile;
 
 public class APSSector20BMLabViewFileFormat implements FileFormat {
 
@@ -22,13 +21,13 @@ public class APSSector20BMLabViewFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> filenames) {
+	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
 		if (filenames.size() != 1) {
 			return FileFormatCompatibility.NO;
 		}
 		
-		Path file = filenames.get(0);
-		try (InputStream in = Files.newInputStream(file)){
+		DataFile file = filenames.get(0);
+		try (InputStream in = file.getInputStream()){
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			
 			String line;

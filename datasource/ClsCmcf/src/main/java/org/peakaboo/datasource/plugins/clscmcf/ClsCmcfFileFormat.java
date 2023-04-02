@@ -4,17 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.peakaboo.common.PeakabooLog;
+import org.peakaboo.app.PeakabooLog;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 
 public class ClsCmcfFileFormat implements FileFormat {
@@ -25,21 +24,21 @@ public class ClsCmcfFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> filenames) {
+	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
 		if (filenames.isEmpty()) { return FileFormatCompatibility.NO; }
 		
 		AlphaNumericComparitor alphacomp = new AlphaNumericComparitor();
 		filenames.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
 		
-		for (Path path : filenames) {
+		for (DataFile path : filenames) {
 			if (!path.toString().endsWith("xdi")) {
 				return FileFormatCompatibility.NO;
 			}
 		}
 		
-		Path file = filenames.get(0);
+		DataFile file = filenames.get(0);
 		
-		try (InputStream in = Files.newInputStream(file)) {
+		try (InputStream in = file.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			String line = reader.readLine();
 			if (!line.startsWith("# XDI/1.0 ")) {

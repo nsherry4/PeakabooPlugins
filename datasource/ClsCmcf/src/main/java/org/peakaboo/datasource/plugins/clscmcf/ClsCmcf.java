@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +16,7 @@ import org.peakaboo.datasource.model.components.metadata.SimpleMetadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
@@ -31,7 +30,7 @@ public class ClsCmcf extends AbstractDataSource {
 	private SimpleMetadata metadata;
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 
@@ -61,23 +60,23 @@ public class ClsCmcf extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		if (paths.isEmpty()) { throw new IllegalArgumentException("Missing files");}
+	public void read(List<DataFile> datafiles) throws IOException {
+		if (datafiles.isEmpty()) { throw new IllegalArgumentException("Missing files");}
 		
 		AlphaNumericComparitor alphacomp = new AlphaNumericComparitor();
-		paths.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
+		datafiles.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
 		
-		Path file = paths.get(0);
-		scandata = new SimpleScanData(file.getFileName().toString());
+		DataFile file = datafiles.get(0);
+		scandata = new SimpleScanData(DataFile.getTitle(datafiles));
 		
 		
-		for (Path path : paths) {
-			readFile(path);			
+		for (DataFile datafile : datafiles) {
+			readFile(datafile);			
 		}
 	}
 	
-	private void readFile(Path path) throws IOException {
-		try (InputStream in = Files.newInputStream(path)) {
+	private void readFile(DataFile datafile) throws IOException {
+		try (InputStream in = datafile.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			String line = reader.readLine();
 			if (!line.startsWith("# XDI/1.0 ")) {

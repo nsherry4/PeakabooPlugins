@@ -4,19 +4,23 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Scanner;
 
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
@@ -27,14 +31,14 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	private static final String NAME = "Horiba XGT-5200";
 	private static final String DESC = "Horiba XGT-5200 micro-XRF Data";
 	
-	private SimpleScanData scandata;
+	private PipelineScanData scandata;
 	
 	public Horiba5200() {
 	}
 
 	@Override
 	public String pluginVersion() {
-		return "0.2";
+		return "0.3";
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 
@@ -73,27 +77,29 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
+	public void read(List<DataFile> paths) throws DataSourceReadException, IOException, InterruptedException {
 		if (paths.size() == 0) { return; }
-		Path first = paths.get(0);
+		DataFile first = paths.get(0);
 		
 		Map<String, String> properties = getProperties(first);
 		
 		int channels = toInt(properties.get("Num. of ch"));
 		float energy = toFloat(properties.get("Energy of ch(eV)"));
-		scandata = new SimpleScanData(first.getFileName().toString());
+		scandata = new PipelineScanData(DataFile.getTitle(paths));
 		scandata.setMaxEnergy(channels * energy / 1000);
 		
 		//read the numbers
-		for (Path path : paths) {
-			scandata.add(readSingle(path, channels));
+		for (DataFile path : paths) {
+			scandata.submit(readSingle(path, channels));
 		}
+		
+		scandata.finish();
 	}
 	
-	private Spectrum readSingle(Path path, int channels) throws IOException {
+	private Spectrum readSingle(DataFile path, int channels) throws IOException {
 		Spectrum s = new ISpectrum(channels);
 		int index = 0;
-		List<String> lines = readlines(path);
+		List<String> lines = path.toLines(Charset.forName("windows-1252"));
 		for (String line : lines) {
 			//skip over the properties
 			if (!isNumeric(line)) { continue; }
@@ -103,9 +109,9 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		return s;
 	}
 	
-	private Map<String, String> getProperties(Path path) throws IOException {
+	private Map<String, String> getProperties(DataFile path) throws IOException {
 		//read the header until we hit numbers
-		List<String> lines = readlines(path);
+		List<String> lines = path.toLines(Charset.forName("windows-1252"));
 		Map<String, String> properties = new HashMap<>();
 		for (String line : lines) {
 			if (isNumeric(line)) { break; }
@@ -135,15 +141,6 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		return Integer.parseInt(str.trim());
 	}
 
-	/*
-	 * readlines reads the entire file at once, making the assumption that this file is meant for this plugin
-	 */
-	private List<String> readlines(Path path) throws IOException {
-		//Best guess these files are using the Latin-1 aka CP1252 aka windows-1252
-		//encoding to encode greek letters
-		return Files.readAllLines(path, Charset.forName("windows-1252"));
-	}
-	
 	
 	/*
 	 * FILE FORMAT METHODS
@@ -155,11 +152,11 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> filenames) {
+	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
 		try {
-			Path first = filenames.get(0);
+			DataFile first = filenames.get(0);
 			//first, reject files larger than 1MB
-			if (Files.size(first) > 1000000) {
+			if (first.size().orElse(0l) > 1000000) {
 				return FileFormatCompatibility.NO;
 			}
 		
@@ -170,7 +167,6 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 			if (!properties.containsKey("Num. of ch")) { return FileFormatCompatibility.NO; }
 			return FileFormatCompatibility.YES_BY_CONTENTS;
 		} catch (Exception e) {
-			System.out.println("caught");
 			return FileFormatCompatibility.NO;
 		}
 	}

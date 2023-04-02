@@ -1,32 +1,31 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.io.FilenameUtils;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
-import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
+import org.peakaboo.framework.autodialog.model.Group;
+import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
-import org.peakaboo.framework.autodialog.model.Group;
-import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
-import org.peakaboo.framework.cyclops.spectrum.Spectrum;
-
 public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
-	private SimpleScanData scandata;
+	private PipelineScanData scandata;
 	protected DataSize dataSize;
-	private LoaderQueue queue;
 	
 	
 	private String name, description;
@@ -53,7 +52,7 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> files) throws DataSourceReadException, IOException {
 		return Optional.empty();
 	}
 
@@ -74,43 +73,40 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		String datasetName = getDatasetTitle(paths);
-		scandata = new SimpleScanData(datasetName);
+	public void read(List<DataFile> datafiles) throws DataSourceReadException, IOException, InterruptedException {
+		String datasetName = getDatasetTitle(datafiles);
+		scandata = new PipelineScanData(datasetName);
 		
-		IHDF5SimpleReader reader = getMetadataReader(paths);
-		dataPaths = getDataPaths(paths);
+		IHDF5SimpleReader reader = getMetadataReader(datafiles);
+		dataPaths = getDataPaths(datafiles);
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPaths.get(0));
-		dataSize = getDataSize(paths, info);
+		dataSize = getDataSize(datafiles, info);
 		getInteraction().notifyScanCount(dataSize.size());
 
-
-		queue = scandata.createLoaderQueue(1000);
-		
 		
 		Comparator<String> comparitor = new AlphaNumericComparitor(); 
-		paths.sort((a, b) -> comparitor.compare(a.getFileName().toString(), b.getFileName().toString()));
+		datafiles.sort((a, b) -> comparitor.compare(a.getFilename(), b.getFilename()));
 		int filenum = 0;
-		for (Path path : paths) {
-			readFile(path, filenum++);
+		for (DataFile datafile : datafiles) {
+			readFile(datafile, filenum++);
 			if (getInteraction().checkReadAborted()) {
-				queue.finish();
+				scandata.finish();
 				return;
 			}
 		}
 		
-		queue.finish();
+		scandata.finish();
 	}
 	
-	protected final void submitScan(int index, Spectrum scan) throws InterruptedException {
-		queue.submit(index, scan);
+	protected final void submitScan(int index, Spectrum scan) throws DataSourceReadException, InterruptedException {
+		scandata.submit(index, scan);
 		if (index > 0 && index % 50 == 0) {
 			getInteraction().notifyScanRead(50);
 		}
 	}
 	
 	@Override
-	public SimpleScanData getScanData() {
+	public PipelineScanData getScanData() {
 		return scandata;
 	}
 	
@@ -119,25 +115,21 @@ public abstract class SimpleHDF5DataSource extends AbstractDataSource {
 		return Optional.of(dataSize);
 	}
 	
-	protected String getDatasetTitle(List<Path> paths) {
-		String title = paths.get(0).getParent().getFileName().toString();
-		if (paths.size() == 1) {
-			title = paths.get(0).getFileName().toString();
-		}
-		return title;
+	protected String getDatasetTitle(List<DataFile> paths) {
+		return DataFile.getTitle(paths);
 	}
 	
-	protected IHDF5SimpleReader getMetadataReader(List<Path> paths) {
-		Path firstPath = paths.get(0);
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(firstPath.toFile());
+	protected IHDF5SimpleReader getMetadataReader(List<DataFile> paths) throws IOException {
+		DataFile firstPath = paths.get(0);
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(firstPath.getAndEnsurePath().toFile());
 		return reader;
 	}
 	
-	protected abstract void readFile(Path path, int filenum) throws Exception;
-	protected abstract DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo);
+	protected abstract void readFile(DataFile path, int filenum) throws DataSourceReadException, IOException, InterruptedException;
+	protected abstract DataSize getDataSize(List<DataFile> paths, HDF5DataSetInformation datasetInfo);
 	
 	//TODO: make this mandatory (abstract) -- no default implementation
-	protected List<String> getDataPaths(List<Path> paths) {
+	protected List<String> getDataPaths(List<DataFile> paths) {
 		if (dataPathPreset != null) {
 			return Collections.singletonList(dataPathPreset);
 		}

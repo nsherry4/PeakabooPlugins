@@ -1,5 +1,6 @@
 package org.peakaboo.datasource.plugins.GenericJHDF;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,8 +14,11 @@ import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
+import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
 import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
@@ -35,9 +39,8 @@ import io.jhdf.api.Dataset;
 
 public abstract class AbstractJHDFDataSource extends AbstractDataSource {
 
-	private SimpleScanData scandata;
+	private PipelineScanData scandata;
 	private DataSize dataSize;
-	private LoaderQueue queue;
 
 	private String name, description;
 	protected List<String> dataPaths;
@@ -53,7 +56,7 @@ public abstract class AbstractJHDFDataSource extends AbstractDataSource {
 	}
 
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 
@@ -73,41 +76,39 @@ public abstract class AbstractJHDFDataSource extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
-		scandata = new SimpleScanData(paths.get(0).getParent().getFileName().toString());
+	public void read(List<DataFile> paths) throws IOException, DataSourceReadException {
+		scandata = new PipelineScanData(DataFile.getTitle(paths));
 
 		// retrieve the first dataset and use it to calculate the total dataset size
-		HdfFile firstFile = new HdfFile(paths.get(0));
+		HdfFile firstFile = new HdfFile(paths.get(0).getAndEnsurePath());
 		Dataset firstDataset = firstFile.getDatasetByPath(dataPaths.get(0));
 		dataSize = getDataSize(paths, firstDataset);
 		getInteraction().notifyScanCount(dataSize.getDataDimensions().x * dataSize.getDataDimensions().y);
 		firstFile.close();
 
-		queue = scandata.createLoaderQueue(1000);
-
 		Comparator<String> comparitor = new AlphaNumericComparitor();
-		paths.sort((a, b) -> comparitor.compare(a.getFileName().toString(), b.getFileName().toString()));
+		paths.sort((a, b) -> comparitor.compare(a.getFilename(), b.getFilename()));
 		int filenum = 0;
-		for (Path path : paths) {
+		for (DataFile path : paths) {
 			readFile(path, filenum++);
 			if (getInteraction().checkReadAborted()) {
-				queue.finish();
+				scandata.finish();
 				return;
 			}
 		}
 
-		queue.finish();
+		scandata.finish();
 	}
 
 	protected final void submitScan(int index, Spectrum scan) throws InterruptedException {
-		queue.submit(index, scan);
+		scandata.submit(index, scan);
 		if (index > 0 && index % 50 == 0) {
 			getInteraction().notifyScanRead(50);
 		}
 	}
 
 	@Override
-	public SimpleScanData getScanData() {
+	public ScanData getScanData() {
 		return scandata;
 	}
 
@@ -119,8 +120,8 @@ public abstract class AbstractJHDFDataSource extends AbstractDataSource {
 	
 	
 
-	protected abstract void readFile(Path path, int filenum) throws Exception;
+	protected abstract void readFile(DataFile path, int filenum) throws IOException, DataSourceReadException;
 
-	protected abstract DataSize getDataSize(List<Path> paths, Dataset firstDataset);
+	protected abstract DataSize getDataSize(List<DataFile> paths, Dataset firstDataset);
 
 }

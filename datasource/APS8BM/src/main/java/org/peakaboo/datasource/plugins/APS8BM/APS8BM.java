@@ -32,7 +32,7 @@ public class APS8BM extends FloatMatrixHDF5DataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.0";
+		return "1.1";
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package org.peakaboo.datasource.plugins.APSSector20;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -11,6 +11,7 @@ import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5DataSource;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
@@ -38,7 +39,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.3";
+		return "1.4";
 	}
 	
 	@Override
@@ -47,7 +48,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 	
 	@Override
-	public void read(List<Path> paths) throws Exception {
+	public void read(List<DataFile> paths) throws DataSourceReadException, IOException, InterruptedException {
 		if (paths.size() != 1) {
 			throw new UnsupportedOperationException();
 		}
@@ -56,7 +57,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 	
 	@Override
-	protected DataSize getDataSize(List<Path> paths, HDF5DataSetInformation info) {
+	protected DataSize getDataSize(List<DataFile> paths, HDF5DataSetInformation info) {
 		long[] dimensions = info.getDimensions();
 		SimpleDataSize dataSize = new SimpleDataSize();
 		dataSize.setDataHeight((int) dimensions[0]);
@@ -66,9 +67,9 @@ public class APSSector20 extends SimpleHDF5DataSource {
 
 	
 	@Override
-	protected void readFile(Path path, int filenum) throws InterruptedException {
+	protected void readFile(DataFile path, int filenum) throws DataSourceReadException, IOException, InterruptedException {
 		String entry = "/2D Scan/MCA 1";
-		IHDF5Reader reader = HDF5Factory.openForReading(path.toFile());
+		IHDF5Reader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		
 		info = reader.getDataSetInformation(entry);
 		rowCount = (int) info.getDimensions()[0];
@@ -127,8 +128,8 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 	
 
-	private void readPhysicalSize(Path path) {
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
+	private void readPhysicalSize(DataFile path) throws IOException {
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		float[] ypos = reader.readFloatArray("/2D Scan/Y Positions");
 		float[] xpos = reader.readFloatArray("/2D Scan/X Positions");
 		

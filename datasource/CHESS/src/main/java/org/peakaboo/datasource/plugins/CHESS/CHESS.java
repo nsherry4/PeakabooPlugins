@@ -1,12 +1,15 @@
 package org.peakaboo.datasource.plugins.CHESS;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 
+import org.peakaboo.app.PeakabooLog;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
@@ -40,7 +43,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 
 	@Override
 	public String pluginVersion() {
-		return "0.3";
+		return "0.4";
 	}
 
 	@Override
@@ -52,8 +55,8 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 	 * Get the data paths as detected and selected.
 	 */
 	@Override
-	protected List<String> getDataPaths(List<Path> paths) {
-		Path path = paths.get(0);
+	protected List<String> getDataPaths(List<DataFile> paths) {
+		DataFile path = paths.get(0);
 		
 		//user has not been prompted to make selection yet, so we list all valid data paths
 		if (root == null) { return allDataPaths(path); }
@@ -68,10 +71,13 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 				}
 			}
 			return dataPaths;
+		} catch (IOException e) {
+			PeakabooLog.get().log(Level.SEVERE, "Failed to detect data paths", e);
+			return List.of();
 		}
 	}
 	
-	public List<String> allDataPaths(Path path) {
+	public List<String> allDataPaths(DataFile path) {
 		try (IHDF5Reader reader = getReader(path)) {
 			List<String> dataPaths = new ArrayList<>();
 			for (String rootName : validRoots(path)) {
@@ -84,10 +90,13 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 			}
 			
 			return dataPaths;
+		} catch (IOException e) {
+			PeakabooLog.get().log(Level.SEVERE, "Failed to detect data paths", e);
+			return List.of();
 		}
 	}
 	
-	private static List<String> validRoots(Path path) {
+	private static List<String> validRoots(DataFile path) {
 		try (IHDF5Reader reader = getReader(path)) {
 			List<String> validRoots = new ArrayList<>();
 			List<String> members = reader.getGroupMembers("/");
@@ -98,11 +107,14 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 				}
 			}
 			return validRoots;
+		} catch (IOException e) {
+			PeakabooLog.get().log(Level.SEVERE, "Failed to detect data path roots", e);
+			return List.of();
 		}
 	}
 	
 	@Override
-	protected DataSize getDataSize(Path path, HDF5DataSetInformation datasetInfo) {
+	protected DataSize getDataSize(DataFile path, HDF5DataSetInformation datasetInfo) {
 		SimpleDataSize size = new SimpleDataSize();
 		try (IHDF5Reader reader = getReader(path)) {
 			//get the y-position array, and assume that the value doesn't change
@@ -120,16 +132,20 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 			int y = samz.length / x;
 			size.setDataWidth(x);
 			size.setDataHeight(y);
+		} catch (IOException e) {
+			PeakabooLog.get().log(Level.SEVERE, "Failed to determine data size", e);
+			//Can we do better here? Optional?
+			return new SimpleDataSize();
 		}
 		return size;
 	}
 	
-	public Optional<Group> getParameters(List<Path> paths) {
-		Path path = paths.get(0);
+	public Optional<Group> getParameters(List<DataFile> datafiles) {
+		DataFile datafile = datafiles.get(0);
 		
 		//it's important that we initialize this parameter even when there's only one dataset
 		//because this is where we look that dataset's name up later on
-		List<String> roots = validRoots(path);
+		List<String> roots = validRoots(datafile);
 		root = new SelectionParameter<String>("Dataset", new DropDownStyle<>(), roots.get(0));
 		root.setPossibleValues(roots);
 		
@@ -158,7 +174,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 	}
 	
 	@Override
-	protected String getDatasetTitle(List<Path> paths) {
+	protected String getDatasetTitle(List<DataFile> paths) {
 		if (root.getPossibleValues().size() <= 1) {
 			return super.getDatasetTitle(paths);
 		} else {

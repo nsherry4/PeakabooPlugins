@@ -20,6 +20,7 @@ import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
@@ -39,7 +40,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 	@Override
 	public String pluginVersion() {
-		return "1.3";
+		return "1.4";
 	}
 	
 	@Override
@@ -55,15 +56,15 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		return Arrays.asList("txt", "emsa", "msa");
 	}
 
-	public FileFormatCompatibility compatibility(Path file) {
+	public FileFormatCompatibility compatibility(DataFile file) {
 		if (
-				!file.toAbsolutePath().toString().toLowerCase().endsWith(".txt") && 
-				!file.toAbsolutePath().toString().toLowerCase().endsWith(".emsa") &&
-				!file.toAbsolutePath().toString().toLowerCase().endsWith(".msa")
+				!file.getFilename().toLowerCase().endsWith(".txt") && 
+				!file.getFilename().toLowerCase().endsWith(".emsa") &&
+				!file.getFilename().toLowerCase().endsWith(".msa")
 			) return FileFormatCompatibility.NO;
 		
 		try {
-			Scanner scanner = new Scanner(file);
+			Scanner scanner = new Scanner(file.getInputStream());
 			scanner.useDelimiter("\n");
 			if (!scanner.hasNext()) return FileFormatCompatibility.NO;
 			String line = scanner.next();
@@ -76,7 +77,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> files) {
+	public FileFormatCompatibility compatibility(List<DataFile> files) {
 		if (files.size() == 0) return FileFormatCompatibility.NO;
 		return compatibility(files.get(0));
 	}
@@ -104,12 +105,12 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 	
 	
-	private void readTags(String filename) throws Exception {
+	private void readTags(DataFile file) throws IOException {
 		
 		if (tags != null) { return; }
 		tags = new HashMap<>();
 		
-		Scanner scanner = new Scanner(new File(filename));
+		Scanner scanner = new Scanner(file.getInputStream());
 		scanner.useDelimiter("\n");
 		
 		while (scanner.hasNext()) {
@@ -127,14 +128,14 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		scanner.close();
 	}
 	
-	public void read(Path file) throws Exception {
+	public void read(DataFile file) throws DataSourceReadException, IOException {
 		
-		scanData = new SimpleScanData(getFormatName());
+		scanData = new SimpleScanData(file.getBasename());
 		
-		readTags(file.toAbsolutePath().toString());
+		readTags(file);
 		
 		Map<Float, Float> energies = new HashMap<>();
-		Scanner scanner = new Scanner(file);
+		Scanner scanner = new Scanner(file.getInputStream());
 		scanner.useDelimiter("\n");
 		
 		while (scanner.hasNext()) {
@@ -211,8 +212,8 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public void read(List<Path> files) throws Exception {
-		for (Path file : files) {
+	public void read(List<DataFile> files) throws DataSourceReadException, IOException {
+		for (DataFile file : files) {
 			read(file);
 		}
 	}
@@ -246,7 +247,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 
 
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 

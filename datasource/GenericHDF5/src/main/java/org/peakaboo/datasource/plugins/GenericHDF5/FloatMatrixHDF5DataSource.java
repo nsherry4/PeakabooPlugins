@@ -1,5 +1,6 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,11 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.peakaboo.common.PeakabooConfiguration;
-import org.peakaboo.common.PeakabooConfiguration.MemorySize;
+import org.peakaboo.app.PeakabooConfiguration;
+import org.peakaboo.app.PeakabooConfiguration.MemorySize;
 import org.peakaboo.datasource.model.DataSource;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
@@ -21,6 +23,7 @@ import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5FloatReader;
 import ch.systemsx.cisd.hdf5.IHDF5Reader;
+
 
 /**
  * This abstract HDF5 {@link DataSource} is designed to make reading single-file
@@ -35,8 +38,8 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	private int zIndex = -1;
 	
 	private static final int BLOCK_READ_SIZE = 	PeakabooConfiguration.memorySize == MemorySize.TINY ? 10 : 
-												PeakabooConfiguration.memorySize == MemorySize.SMALL ? 25 : 
-												PeakabooConfiguration.memorySize == MemorySize.MEDIUM ? 100 : 200;
+												PeakabooConfiguration.memorySize == MemorySize.SMALL ? 50 : 
+												PeakabooConfiguration.memorySize == MemorySize.MEDIUM ? 200 : 400;
 	
 	public FloatMatrixHDF5DataSource(String axisOrder, String dataPath, String name, String description) {
 		super(dataPath, name, description);
@@ -62,13 +65,13 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	}
 
 	@Override
-	public void read(List<Path> paths) throws Exception {
+	public void read(List<DataFile> paths) throws DataSourceReadException, IOException, InterruptedException {
 		readAxisOrder();
 		super.read(paths);
 	}
 	
 	@Override
-	protected void readFile(Path path, int filenum) throws Exception {
+	protected void readFile(DataFile path, int filenum) throws DataSourceReadException, IOException, InterruptedException {
 		if (filenum > 0) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
@@ -158,8 +161,10 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 				     * @param offset The offset in the data set to start reading from in each dimension.
 				     * @return The data block read from the data set.
 				     */
+					//TODO: ~89% of loading time is this call
 					MDFloatArray mdarray = floatreader.readMDArrayBlockWithOffset(dataPath, range, offset);
 					List<Spectrum> spectra = floatsToSpectra(mdarray.getAsFlatArray(), channels);
+					
 					
 					//For each spectrum returned, do some post-processing
 					for (int i = 0; i < spectra.size(); i++) {
@@ -208,25 +213,26 @@ public abstract class FloatMatrixHDF5DataSource extends SimpleHDF5DataSource {
 	 */
 	private int blockReadSize(int x, int width) {
 		int endx = Math.min(x + BLOCK_READ_SIZE, width);
+		//System.out.println("endx="+endx+", x=" + x);
 		return endx - x;
 		
 	}
 	
 	
 	@Override
-	protected final DataSize getDataSize(List<Path> paths, HDF5DataSetInformation datasetInfo) {
-		Path path = paths.get(0);
+	protected final DataSize getDataSize(List<DataFile> paths, HDF5DataSetInformation datasetInfo) {
+		DataFile path = paths.get(0);
 		return getDataSize(path, datasetInfo);
 	}
-	protected DataSize getDataSize(Path path, HDF5DataSetInformation datasetInfo) {
+	protected DataSize getDataSize(DataFile path, HDF5DataSetInformation datasetInfo) {
 		SimpleDataSize size = new SimpleDataSize();
 		size.setDataHeight(yIndex == -1 ? 1 : (int) datasetInfo.getDimensions()[yIndex]);
 		size.setDataWidth((int) datasetInfo.getDimensions()[xIndex]);
 		return size;
 	}
 	
-	protected static IHDF5Reader getReader(Path path) {
-		return HDF5Factory.openForReading(path.toFile());
+	protected static IHDF5Reader getReader(DataFile path) throws IOException {
+		return HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 	}
 	
 	/**

@@ -1,30 +1,28 @@
 package org.peakaboo.datasource.plugins.sigray;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
 import org.peakaboo.datasource.model.components.metadata.Metadata;
 import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
-
-import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
-import ch.systemsx.cisd.hdf5.HDF5Factory;
-import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
+import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.Bounds;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
-import org.peakaboo.framework.autodialog.model.Group;
+
+import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
+import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
 public class SigrayHDF5 extends AbstractDataSource {
 
@@ -35,7 +33,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 	@Override
 	public String pluginVersion() {
-		return "1.3";
+		return "1.4";
 	}
 	
 	@Override
@@ -52,13 +50,13 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 
 	
-	public void read(Path path) throws Exception {
+	public void read(DataFile datafile) throws IOException {
 
-		scandata = new SimpleScanData(path.getFileName().toString());
+		scandata = new SimpleScanData(datafile.getBasename());
 
 		
 		
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(datafile.getAndEnsurePath().toFile());
 
 		HDF5DataSetInformation info = reader.getDataSetInformation("/MAPS/mca_arr");
 		long size[] = info.getDimensions();
@@ -130,7 +128,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<Path> files) throws Exception {
+	public void read(List<DataFile> files) throws IOException {
 		read(files.get(0));
 	}
 
@@ -163,7 +161,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 

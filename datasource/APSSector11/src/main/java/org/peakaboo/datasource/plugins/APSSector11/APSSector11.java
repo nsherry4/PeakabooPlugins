@@ -14,7 +14,7 @@ public class APSSector11 extends FloatMatrixHDF5DataSource  {
 
 	@Override
 	public String pluginVersion() {
-		return "0.1";
+		return "0.2";
 	}
 
 	@Override

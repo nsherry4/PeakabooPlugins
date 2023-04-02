@@ -1,9 +1,11 @@
 package org.peakaboo.datasource.plugins.GenericHDF5;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
@@ -23,7 +25,7 @@ public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 	}
 	
 	@Override
-	protected void readFile(Path path, int filenum) throws InterruptedException {
+	protected void readFile(DataFile path, int filenum) throws DataSourceReadException, IOException, InterruptedException {
 		
 		//Read the contents of the file as a float array
 		HDF5DataSetInformation info = readDatasetInfo(path);
@@ -72,8 +74,8 @@ public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 	
 
 	
-	protected float[] readSpectralData(Path path) {
-		IHDF5Reader reader = HDF5Factory.openForReading(path.toFile());	
+	protected float[] readSpectralData(DataFile path) throws IOException {
+		IHDF5Reader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());	
 		float[] data = readSpectralData(reader, dataPath);
 		reader.close();
 		return data;
@@ -83,8 +85,8 @@ public abstract class ManagedHDF5DataSource extends SimpleHDF5DataSource {
 		return reader.readFloatArray(dataPath);
 	}
 	
-	protected HDF5DataSetInformation readDatasetInfo(Path path) {
-		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.toFile());	
+	protected HDF5DataSetInformation readDatasetInfo(DataFile path) throws IOException {
+		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());	
 		HDF5DataSetInformation info = reader.getDataSetInformation(dataPath);
 		reader.close();
 		return info;

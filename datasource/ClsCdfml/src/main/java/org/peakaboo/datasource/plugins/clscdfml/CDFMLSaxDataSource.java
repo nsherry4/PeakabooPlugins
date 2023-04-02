@@ -2,8 +2,8 @@ package org.peakaboo.datasource.plugins.clscdfml;
 
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.peakaboo.common.PeakabooLog;
+import org.peakaboo.app.PeakabooLog;
 import org.peakaboo.datasource.model.components.datasize.DataSize;
 import org.peakaboo.datasource.model.components.fileformat.FileFormat;
 import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
@@ -23,8 +23,9 @@ import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.datasource.model.components.scandata.ScanData;
 import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
 import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
+import org.peakaboo.datasource.model.datafile.DataFile;
 import org.peakaboo.datasource.plugin.AbstractDataSource;
-
+import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.Bounds;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.Range;
@@ -32,7 +33,6 @@ import org.peakaboo.framework.cyclops.SISize;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
-import org.peakaboo.framework.autodialog.model.Group;
 
 
 public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData
@@ -331,7 +331,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		if (hasDataset) return dataset;
 		if (hasSample) return sample;
 		
-		if (reader.sourceFile != null) return reader.sourceFile;
+		if (reader.sourceFile != null) return reader.sourceFile.getBasename();
 		return "Unknown Dataset";
 
 	}
@@ -569,14 +569,14 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	//==============================================
 
 
-	public FileFormatCompatibility compatibility(Path path)
+	public FileFormatCompatibility compatibility(DataFile path)
 	{	
-		String ext = path.toFile().getAbsolutePath().toLowerCase();
+		String ext = path.getFilename();
 		if (!   (ext.endsWith(".xml") || ext.endsWith(".cdfml"))  ) return FileFormatCompatibility.NO;
 		
 		try
 		{
-			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path.toFile())));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(path.getInputStream()));
 			
 			int lineCount = 0;
 			String start = "", line;
@@ -604,7 +604,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> paths)
+	public FileFormatCompatibility compatibility(List<DataFile> paths)
 	{
 		if (paths.size() != 1) {
 			return FileFormatCompatibility.NO;
@@ -614,10 +614,10 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		
 	}
 
-	public void read(Path file) throws Exception
+	public void read(DataFile file) throws IOException, DataSourceReadException
 	{
 		this.analysis = new DataSourceAnalysis();
-		reader.read(file.toFile().getAbsolutePath(), this.getInteraction()::checkReadAborted);
+		reader.read(file, this.getInteraction()::checkReadAborted);
 
 		
 		//get a listing of all of the categories that this supports
@@ -629,7 +629,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 	@Override
-	public void read(List<Path> files) throws Exception
+	public void read(List<DataFile> files) throws DataSourceReadException, IOException
 	{
 		if (files == null) throw new UnsupportedOperationException();
 		if (files.size() == 0) throw new UnsupportedOperationException();
@@ -687,7 +687,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataFile> paths) {
 		return Optional.empty();
 	}
 
