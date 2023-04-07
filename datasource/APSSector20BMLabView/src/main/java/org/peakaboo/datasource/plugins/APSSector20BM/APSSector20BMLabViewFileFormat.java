@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 public class APSSector20BMLabViewFileFormat implements FileFormat {
 

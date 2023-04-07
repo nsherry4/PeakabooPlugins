@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.SimpleFileFormat;
-import org.peakaboo.datasource.model.components.metadata.Metadata;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
-import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.datafile.DataFile;
-import org.peakaboo.datasource.plugin.AbstractDataSource;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.SimpleFileFormat;
+import org.peakaboo.dataset.source.model.components.metadata.Metadata;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
+import org.peakaboo.dataset.source.model.components.scandata.ScanData;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.filter.model.Filter;
 import org.peakaboo.filter.plugins.noise.WeightedAverageNoiseFilter;
 import org.peakaboo.framework.autodialog.model.Group;
@@ -143,7 +143,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 		
 		BufferedInputStream bis = new BufferedInputStream(datafile.getInputStream());
 		
-		
+		int index = 0;
 		int count = 0;
 		byte[] byteArray = new byte[dataChannels];
 		while (true) {
@@ -158,7 +158,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 				asFloatArray[i] = byteArray[i];
 			}
 			
-			scandata.submit(new ISpectrum(asFloatArray));
+			scandata.submit(index++, new ISpectrum(asFloatArray));
 
 			count++;
 			if (count == 100) {

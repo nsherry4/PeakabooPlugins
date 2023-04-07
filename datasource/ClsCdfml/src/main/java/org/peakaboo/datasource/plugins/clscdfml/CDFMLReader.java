@@ -12,9 +12,9 @@ import java.util.Stack;
 import java.util.function.Supplier;
 
 import org.peakaboo.app.Version;
-import org.peakaboo.datasource.model.DataSource.DataSourceReadException;
-import org.peakaboo.datasource.model.PeakabooLists;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.PeakabooLists;
+import org.peakaboo.dataset.source.model.DataSource.DataSourceReadException;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

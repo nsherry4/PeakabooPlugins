@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;

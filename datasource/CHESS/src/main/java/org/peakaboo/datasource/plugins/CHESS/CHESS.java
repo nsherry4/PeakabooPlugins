@@ -7,10 +7,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
-import org.peakaboo.datasource.model.datafile.DataFile;
-import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.FloatMatrixHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.SelectionParameter;

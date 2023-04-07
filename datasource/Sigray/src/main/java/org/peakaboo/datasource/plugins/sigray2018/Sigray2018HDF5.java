@@ -7,22 +7,21 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.metadata.Metadata;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
-import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
-import org.peakaboo.datasource.model.components.scandata.loaderqueue.LoaderQueue;
-import org.peakaboo.datasource.model.datafile.DataFile;
-import org.peakaboo.datasource.plugin.AbstractDataSource;
-
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
 import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.metadata.Metadata;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
+import org.peakaboo.dataset.source.model.components.scandata.ScanData;
+import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
+import org.peakaboo.dataset.source.model.components.scandata.loaderqueue.LoaderQueue;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
@@ -90,12 +89,12 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		float[] data1 = reader.readFloatArray("/entry/detector/data1");
 		reader.close();
 
-		
+		int index = 0;
 		for (int y = 0; y < dy; y++) { // y-axis
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis
 				Spectrum s = new ISpectrum(Arrays.copyOfRange(data1, index3(x, y, 0, dx, dy, dz), index3(x, y, dz, dx, dy, dz)), false);
-				scandata.submit(s);
+				scandata.submit(index++, s);
 
 			}
 			getInteraction().notifyScanRead(dx);

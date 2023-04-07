@@ -1,6 +1,6 @@
 package org.peakaboo.datasource.plugins.APSSector11;
 
-import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
+import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.FloatMatrixHDF5DataSource;
 
 public class APSSector11 extends FloatMatrixHDF5DataSource  {
 

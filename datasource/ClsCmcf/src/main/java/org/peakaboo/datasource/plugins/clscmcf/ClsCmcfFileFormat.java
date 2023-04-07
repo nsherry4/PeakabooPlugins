@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 
 public class ClsCmcfFileFormat implements FileFormat {

@@ -3,12 +3,12 @@ package org.peakaboo.datasource.plugins.APS8BM;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
-import org.peakaboo.datasource.plugins.GenericHDF5.FloatMatrixHDF5DataSource;
-import org.peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5FileFormat;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.physicalsize.SimplePhysicalSize;
+import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.FloatMatrixHDF5DataSource;
+import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.SimpleHDF5FileFormat;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
 

@@ -12,16 +12,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.components.metadata.Metadata;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.PipelineScanData;
-import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.components.scandata.SimpleScanData;
-import org.peakaboo.datasource.model.datafile.DataFile;
-import org.peakaboo.datasource.plugin.AbstractDataSource;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.components.metadata.Metadata;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
+import org.peakaboo.dataset.source.model.components.scandata.ScanData;
+import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
@@ -89,8 +89,9 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		scandata.setMaxEnergy(channels * energy / 1000);
 		
 		//read the numbers
+		int index = 0;
 		for (DataFile path : paths) {
-			scandata.submit(readSingle(path, channels));
+			scandata.submit(index++, readSingle(path, channels));
 		}
 		
 		scandata.finish();

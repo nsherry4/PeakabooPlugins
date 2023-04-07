@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;

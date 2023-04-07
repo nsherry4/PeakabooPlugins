@@ -7,12 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.datasize.SimpleDataSize;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.physicalsize.SimplePhysicalSize;
-import org.peakaboo.datasource.model.datafile.DataFile;
-import org.peakaboo.datasource.plugins.GenericHDF5.SimpleHDF5DataSource;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.physicalsize.SimplePhysicalSize;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.SimpleHDF5DataSource;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;

@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.datafile.DataFile;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 import io.jhdf.HdfFile;
 import io.jhdf.api.Node;
