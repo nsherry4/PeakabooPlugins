@@ -2,10 +2,8 @@ package org.peakaboo.datasource.plugins.clscdfml;
 
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -209,7 +207,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 			
 			
 			s = new ISpectrum(getScan(0, 0).size(), 0f);
-			for (Integer i : new Range(0, numElements()-1))
+			for (Integer i : new Range(0, numElements()))
 			{
 				
 				s2 = getScan(i, index);

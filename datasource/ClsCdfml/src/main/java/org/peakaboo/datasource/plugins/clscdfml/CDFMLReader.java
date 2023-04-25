@@ -2,7 +2,6 @@ package org.peakaboo.datasource.plugins.clscdfml;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,21 +10,20 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import org.peakaboo.app.Version;
-import org.peakaboo.dataset.source.model.PeakabooLists;
 import org.peakaboo.dataset.source.model.DataSource.DataSourceReadException;
+import org.peakaboo.dataset.source.model.PeakabooLists;
 import org.peakaboo.dataset.source.model.datafile.DataFile;
+import org.peakaboo.framework.cyclops.Pair;
+import org.peakaboo.framework.cyclops.Range;
+import org.peakaboo.framework.cyclops.SparsedList;
+import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
-import org.peakaboo.framework.cyclops.Pair;
-import org.peakaboo.framework.cyclops.Range;
-import org.peakaboo.framework.cyclops.SparsedList;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
-import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 
 public abstract class CDFMLReader extends DefaultHandler2
@@ -162,7 +160,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 			String varName = getTagAttribute(CDFMLStrings.TAG_VAR, CDFMLStrings.XML_ATTR_NAME);
 			
 			Map<String, String> attsMap = new HashMap<String, String>(12);
-			for (Integer i : new Range(0, atts.getLength()-1))
+			for (Integer i : new Range(0, atts.getLength()))
 			{
 				attsMap.put(atts.getQName(i), atts.getValue(i));
 			}
