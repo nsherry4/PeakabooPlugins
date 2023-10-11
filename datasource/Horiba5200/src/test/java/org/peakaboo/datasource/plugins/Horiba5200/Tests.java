@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
-import org.peakaboo.dataset.source.model.DataSource.DataSourceReadException;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.datafile.PathDataFile;
 import org.peakaboo.framework.cyclops.FloatException;
 

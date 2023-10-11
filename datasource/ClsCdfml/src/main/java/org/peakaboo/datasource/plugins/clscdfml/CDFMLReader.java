@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Supplier;
 
-import org.peakaboo.dataset.source.model.DataSource.DataSourceReadException;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.PeakabooLists;
 import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.Pair;
