@@ -1,15 +1,10 @@
 package org.peakaboo.datasource.plugins.sigray2018;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
-import ch.systemsx.cisd.hdf5.HDF5Factory;
-import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
@@ -19,14 +14,16 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
-import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
-import org.peakaboo.dataset.source.model.components.scandata.loaderqueue.LoaderQueue;
 import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
+
+import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
+import ch.systemsx.cisd.hdf5.HDF5Factory;
+import ch.systemsx.cisd.hdf5.IHDF5SimpleReader;
 
 public class Sigray2018HDF5 extends AbstractDataSource {
 
@@ -61,15 +58,17 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		int dx = (int) size[0];
 		int dy = (int) size[1];
 		int dz = (int) size[2];
-		getInteraction().notifyScanCount(dx * dy * paths.size());
+		dy *= paths.size(); //Individual files seem to only encode individual dimensions
+		getInteraction().notifyScanCount(dx * dy);
 		
-		dataSize.setDataHeight(paths.size());
+		dataSize.setDataHeight(dy);
 		dataSize.setDataWidth(dx);
 	
 		Comparator<String> comparitor = new AlphaNumericComparitor(); 
 		paths.sort((a, b) -> comparitor.compare(a.getFilename(), b.getFilename()));
+		int index = 0;
 		for (DataFile path : paths) {
-			readRow(path);
+			index = readRow(path, index);
 			if (getInteraction().checkReadAborted()) {
 				scandata.finish();
 				return;
@@ -79,7 +78,10 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		scandata.finish();
 	}
 
-	private void readRow(DataFile path) throws DataSourceReadException, IOException, InterruptedException {
+	// Reads a file (which probably contains a single row of spectra). Scans are
+	// submitted with a 1D index which is passed in, incremented as needed, and
+	// returned.
+	private int readRow(DataFile path, int index) throws DataSourceReadException, IOException, InterruptedException {
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		HDF5DataSetInformation info = reader.getDataSetInformation("/entry/detector/data1");
 		long size[] = info.getDimensions();
@@ -90,7 +92,6 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		float[] data1 = reader.readFloatArray("/entry/detector/data1");
 		reader.close();
 
-		int index = 0;
 		for (int y = 0; y < dy; y++) { // y-axis
 			Spectrum[] spectra = new Spectrum[dx];
 			for (int x = 0; x < dx; x++) { // x-axis
@@ -104,6 +105,8 @@ public class Sigray2018HDF5 extends AbstractDataSource {
 		
 		data1 = null;
 		System.gc();
+		
+		return index;
 	}
 
 
