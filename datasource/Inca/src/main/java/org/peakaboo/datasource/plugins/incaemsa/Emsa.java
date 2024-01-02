@@ -1,18 +1,15 @@
 package org.peakaboo.datasource.plugins.incaemsa;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -21,10 +18,9 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 public class Emsa extends AbstractDataSource implements FileFormat {
@@ -57,7 +53,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		return Arrays.asList("txt", "emsa", "msa");
 	}
 
-	public FileFormatCompatibility compatibility(DataFile file) {
+	public FileFormatCompatibility compatibility(DataInputAdapter file) {
 		if (
 				!file.getFilename().toLowerCase().endsWith(".txt") && 
 				!file.getFilename().toLowerCase().endsWith(".emsa") &&
@@ -78,7 +74,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> files) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> files) {
 		if (files.size() == 0) return FileFormatCompatibility.NO;
 		return compatibility(files.get(0));
 	}
@@ -106,7 +102,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	
 	
 	
-	private void readTags(DataFile file) throws IOException {
+	private void readTags(DataInputAdapter file) throws IOException {
 		
 		if (tags != null) { return; }
 		tags = new HashMap<>();
@@ -129,7 +125,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 		scanner.close();
 	}
 	
-	public void read(DataFile file) throws DataSourceReadException, IOException {
+	public void read(DataInputAdapter file) throws DataSourceReadException, IOException {
 		
 		scanData = new SimpleScanData(file.getBasename());
 		
@@ -180,7 +176,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 			tag_npoints = (int)Float.parseFloat(tags.get("NPOINTS"));
 		}
 			
-		Spectrum spectrum = new ISpectrum(tag_npoints );
+		Spectrum spectrum = new ArraySpectrum(tag_npoints );
 		
 		List<Float> keys = new ArrayList<>(energies.keySet());
 		keys.sort((a, b) -> Float.compare(a, b));
@@ -213,8 +209,8 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public void read(List<DataFile> files) throws DataSourceReadException, IOException {
-		for (DataFile file : files) {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {	
+		for (DataInputAdapter file : ctx.inputs()) {
 			read(file);
 		}
 	}
@@ -248,7 +244,7 @@ public class Emsa extends AbstractDataSource implements FileFormat {
 
 
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 

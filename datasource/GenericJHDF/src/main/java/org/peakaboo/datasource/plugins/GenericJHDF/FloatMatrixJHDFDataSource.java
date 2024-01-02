@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
 
@@ -48,7 +48,7 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 	}
 	
 	@Override
-	protected void readFile(DataFile path, int filenum) throws IOException, DataSourceReadException {
+	protected void readFile(DataInputAdapter path, int filenum) throws IOException, DataSourceReadException {
 		if (filenum > 0) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
@@ -91,7 +91,7 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 				for (int x = 0; x < width; x++) {
 					
 					int index = (y*width+x);
-					Spectrum agg = new ISpectrum(channels);
+					Spectrum agg = new ArraySpectrum(channels);
 					for (String dataPath : dataPaths) {
 						
 						Dataset ds = hdf.getDatasetByPath(dataPath);
@@ -100,7 +100,7 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 						if (yIndex > -1) { bounds[yIndex] = y; }
 						bounds[xIndex] = x;
 						bounds[zIndex] = 0;
-						Spectrum scan = new ISpectrum(HdfUtil.readFloatArray(ds, data, zIndex, bounds), true);
+						Spectrum scan = new ArraySpectrum(HdfUtil.readFloatArray(ds, data, zIndex, bounds), true);
 						SpectrumCalculations.addLists_inplace(agg, scan);
 						
 					}
@@ -122,7 +122,7 @@ public abstract class FloatMatrixJHDFDataSource extends AbstractJHDFDataSource {
 	}
 
 	@Override
-	protected DataSize getDataSize(List<DataFile> paths, Dataset firstDataset) {
+	protected DataSize getDataSize(List<DataInputAdapter> paths, Dataset firstDataset) {
 		SimpleDataSize size = new SimpleDataSize();
 		size.setDataHeight(yIndex == -1 ? 1 : (int) firstDataset.getDimensions()[yIndex]);
 		size.setDataWidth((int) firstDataset.getDimensions()[xIndex]);

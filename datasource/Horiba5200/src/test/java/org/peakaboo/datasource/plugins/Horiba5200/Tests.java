@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.peakaboo.dataset.io.PathDataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSource.DataSourceContext;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
-import org.peakaboo.dataset.source.model.datafile.PathDataFile;
 import org.peakaboo.framework.cyclops.FloatException;
 
 public class Tests {
@@ -18,7 +19,7 @@ public class Tests {
 
 		var ds = new Horiba5200();
 		var file = new File("src/test/resources/datasets/Transect/Transect1003.txt").getAbsoluteFile();
-		ds.read(List.of(new PathDataFile(file)));
+		ds.read(new DataSourceContext(List.of(new PathDataInputAdapter(file))));
 		float counts = ds.getScanData().get(0).get(100);
 		FloatException.guard(counts);
 		assertEquals(counts, 5f, 0.001f);

@@ -7,16 +7,16 @@ import java.util.Optional;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.FloatMatrixHDF5DataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.SelectionParameter;
 import org.peakaboo.framework.autodialog.model.style.editors.CheckBoxStyle;
 import org.peakaboo.framework.autodialog.model.style.editors.DropDownStyle;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
 
@@ -55,8 +55,8 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 	 * Get the data paths as detected and selected.
 	 */
 	@Override
-	protected List<String> getDataPaths(List<DataFile> paths) {
-		DataFile path = paths.get(0);
+	protected List<String> getDataPaths(List<DataInputAdapter> paths) {
+		DataInputAdapter path = paths.get(0);
 		
 		//user has not been prompted to make selection yet, so we list all valid data paths
 		if (root == null) { return allDataPaths(path); }
@@ -77,7 +77,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 		}
 	}
 	
-	public List<String> allDataPaths(DataFile path) {
+	public List<String> allDataPaths(DataInputAdapter path) {
 		try (IHDF5Reader reader = getReader(path)) {
 			List<String> dataPaths = new ArrayList<>();
 			for (String rootName : validRoots(path)) {
@@ -96,7 +96,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 		}
 	}
 	
-	private static List<String> validRoots(DataFile path) {
+	private static List<String> validRoots(DataInputAdapter path) {
 		try (IHDF5Reader reader = getReader(path)) {
 			List<String> validRoots = new ArrayList<>();
 			List<String> members = reader.getGroupMembers("/");
@@ -114,7 +114,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 	}
 	
 	@Override
-	protected DataSize getDataSize(DataFile path, HDF5DataSetInformation datasetInfo) {
+	protected DataSize getDataSize(DataInputAdapter path, HDF5DataSetInformation datasetInfo) {
 		SimpleDataSize size = new SimpleDataSize();
 		try (IHDF5Reader reader = getReader(path)) {
 			//get the y-position array, and assume that the value doesn't change
@@ -140,8 +140,8 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 		return size;
 	}
 	
-	public Optional<Group> getParameters(List<DataFile> datafiles) {
-		DataFile datafile = datafiles.get(0);
+	public Optional<Group> getParameters(List<DataInputAdapter> datafiles) {
+		DataInputAdapter datafile = datafiles.get(0);
 		
 		//it's important that we initialize this parameter even when there's only one dataset
 		//because this is where we look that dataset's name up later on
@@ -165,7 +165,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 			float[] deadtimeArray = reader.readFloatArray(deadtimePath);
 			//TODO: confirm this assumption
 			//Stores deadtime as percent 0-100, need to scale to 0.0-1.0
-			Spectrum deadtimes = new ISpectrum(deadtimeArray, true);
+			Spectrum deadtimes = new ArraySpectrum(deadtimeArray, true);
 			SpectrumCalculations.divideBy_inplace(deadtimes, 100f);
 			return deadtimes;
 		} else {
@@ -174,7 +174,7 @@ public class CHESS extends FloatMatrixHDF5DataSource  {
 	}
 	
 	@Override
-	protected String getDatasetTitle(List<DataFile> paths) {
+	protected String getDatasetTitle(List<DataInputAdapter> paths) {
 		if (root.getPossibleValues().size() <= 1) {
 			return super.getDatasetTitle(paths);
 		} else {

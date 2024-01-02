@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
 
 public class ClsCmcfFileFormat implements FileFormat {
@@ -24,19 +24,19 @@ public class ClsCmcfFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> filenames) {
 		if (filenames.isEmpty()) { return FileFormatCompatibility.NO; }
 		
 		AlphaNumericComparitor alphacomp = new AlphaNumericComparitor();
 		filenames.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
 		
-		for (DataFile path : filenames) {
+		for (DataInputAdapter path : filenames) {
 			if (!path.toString().endsWith("xdi")) {
 				return FileFormatCompatibility.NO;
 			}
 		}
 		
-		DataFile file = filenames.get(0);
+		DataInputAdapter file = filenames.get(0);
 		
 		try (InputStream in = file.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));

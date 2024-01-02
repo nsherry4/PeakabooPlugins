@@ -2,16 +2,13 @@ package org.peakaboo.datasource.plugins.Horiba5200;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Scanner;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -20,11 +17,9 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
-import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 public class Horiba5200 extends AbstractDataSource implements FileFormat {
@@ -48,7 +43,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 
@@ -78,28 +73,38 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public void read(List<DataFile> paths) throws DataSourceReadException, IOException, InterruptedException {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> paths = ctx.inputs();
+		
 		if (paths.size() == 0) { return; }
-		DataFile first = paths.get(0);
+		DataInputAdapter first = paths.get(0);
 		
 		Map<String, String> properties = getProperties(first);
 		
 		int channels = toInt(properties.get("Num. of ch"));
 		float energy = toFloat(properties.get("Energy of ch(eV)"));
-		scandata = new PipelineScanData(DataFile.getTitle(paths));
+		scandata = new PipelineScanData(DataInputAdapter.getTitle(paths));
 		scandata.setMaxEnergy(channels * energy / 1000);
 		
 		//read the numbers
 		int index = 0;
-		for (DataFile path : paths) {
+		int cycle = 0;
+		for (DataInputAdapter path : paths) {
 			scandata.submit(index++, readSingle(path, channels));
+			if (cycle++ > 50) {
+				cycle = 0;
+				if (getInteraction().checkReadAborted()) {
+					scandata.abort();
+					return;
+				}
+			}
 		}
 		
 		scandata.finish();
 	}
 	
-	private Spectrum readSingle(DataFile path, int channels) throws IOException {
-		Spectrum s = new ISpectrum(channels);
+	private Spectrum readSingle(DataInputAdapter path, int channels) throws IOException {
+		Spectrum s = new ArraySpectrum(channels);
 		int index = 0;
 		List<String> lines = path.toLines(Charset.forName("windows-1252"));
 		for (String line : lines) {
@@ -111,7 +116,7 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 		return s;
 	}
 	
-	private Map<String, String> getProperties(DataFile path) throws IOException {
+	private Map<String, String> getProperties(DataInputAdapter path) throws IOException {
 		//read the header until we hit numbers
 		List<String> lines = path.toLines(Charset.forName("windows-1252"));
 		Map<String, String> properties = new HashMap<>();
@@ -154,9 +159,9 @@ public class Horiba5200 extends AbstractDataSource implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> filenames) {
 		try {
-			DataFile first = filenames.get(0);
+			DataInputAdapter first = filenames.get(0);
 			//first, reject files larger than 1MB
 			if (first.size().orElse(0l) > 1000000) {
 				return FileFormatCompatibility.NO;

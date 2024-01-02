@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 import io.jhdf.HdfFile;
 import io.jhdf.api.Node;
@@ -33,7 +33,7 @@ public class SimpleJHDFFileFormat implements FileFormat {
 		return Arrays.asList(new String[] {"h5", "hdf5"});
 	}
 
-	public FileFormatCompatibility compatibility(DataFile path) {
+	public FileFormatCompatibility compatibility(DataInputAdapter path) {
 		try (HdfFile hdf = new HdfFile(path.getAndEnsurePath())){
 			for (String dataPath : dataPaths) {
 				Node node = hdf.getByPath(dataPath);
@@ -46,7 +46,7 @@ public class SimpleJHDFFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> filenames) {
 		return compatibility(filenames.get(0));
 	}
 

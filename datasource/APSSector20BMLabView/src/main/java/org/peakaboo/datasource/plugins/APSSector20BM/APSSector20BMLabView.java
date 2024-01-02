@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -16,10 +17,9 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 
 
 
@@ -28,7 +28,7 @@ public class APSSector20BMLabView extends AbstractDataSource {
 	private PipelineScanData scandata;
 	
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 
@@ -58,12 +58,14 @@ public class APSSector20BMLabView extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<DataFile> datafiles) throws DataSourceReadException, IOException, InterruptedException {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> datafiles = ctx.inputs();
+		
 		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException("Expected exactly 1 file");
 		}
 		
-		DataFile datafile = datafiles.get(0);
+		DataInputAdapter datafile = datafiles.get(0);
 		
 		scandata = new PipelineScanData(datafile.getBasename());
 		
@@ -101,7 +103,7 @@ public class APSSector20BMLabView extends AbstractDataSource {
 				channels.add(sum);
 			}
 			
-			scandata.submit(0, new ISpectrum(channels));
+			scandata.submit(0, new ArraySpectrum(channels));
 
 			
 		}

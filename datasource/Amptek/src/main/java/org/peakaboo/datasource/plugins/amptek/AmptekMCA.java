@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -19,10 +20,9 @@ import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.Analysis;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.DataSourceAnalysis;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.util.StringInput;
 
@@ -49,7 +49,7 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 		return "fe4f9def-9cf9-46b8-b460-bbde62a6f144";
 	}
 	
-	private Spectrum readMCA(DataFile file) throws IOException
+	private Spectrum readMCA(DataInputAdapter file) throws IOException
 	{
 		BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream()));
 		List<String> lines = StringInput.lines(r).stream().collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 		int startIndex = lines.indexOf("<<DATA>>") + 1;
 		int endIndex = lines.indexOf("<<END>>");
 		
-		Spectrum s = new ISpectrum(lines.subList(startIndex, endIndex).stream().map(line -> Float.parseFloat(line)).collect(toList()));
+		Spectrum s = new ArraySpectrum(lines.subList(startIndex, endIndex).stream().map(line -> Float.parseFloat(line)).collect(toList()));
 		
 		analysis = new DataSourceAnalysis();
 		analysis.process(s);
@@ -114,15 +114,16 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	
 	
 
-	public void read(DataFile file) throws IOException
+	public void read(DataInputAdapter file) throws IOException
 	{
 		spectrum = readMCA(file);
 		scanName = file.getFilename();
 	}
 
 	@Override
-	public void read(List<DataFile> files) throws DataSourceReadException, IOException
-	{
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> files = ctx.inputs();
+		
 		if (files == null) throw new UnsupportedOperationException();
 		if (files.size() == 0) throw new UnsupportedOperationException();
 		if (files.size() > 1) throw new UnsupportedOperationException();
@@ -155,7 +156,7 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	}
 
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 

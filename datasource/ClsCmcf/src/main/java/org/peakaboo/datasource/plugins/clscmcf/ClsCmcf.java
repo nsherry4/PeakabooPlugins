@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 import org.peakaboo.dataset.source.model.components.metadata.Metadata;
@@ -16,11 +18,10 @@ import org.peakaboo.dataset.source.model.components.metadata.SimpleMetadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.bolt.plugin.core.AlphaNumericComparitor;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 
 
 
@@ -30,7 +31,7 @@ public class ClsCmcf extends AbstractDataSource {
 	private SimpleMetadata metadata;
 	
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 
@@ -60,22 +61,24 @@ public class ClsCmcf extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<DataFile> datafiles) throws IOException {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> datafiles = ctx.inputs();
+		
 		if (datafiles.isEmpty()) { throw new IllegalArgumentException("Missing files");}
 		
 		AlphaNumericComparitor alphacomp = new AlphaNumericComparitor();
 		datafiles.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
 		
-		DataFile file = datafiles.get(0);
-		scandata = new SimpleScanData(DataFile.getTitle(datafiles));
+		DataInputAdapter file = datafiles.get(0);
+		scandata = new SimpleScanData(DataInputAdapter.getTitle(datafiles));
 		
 		
-		for (DataFile datafile : datafiles) {
+		for (DataInputAdapter datafile : datafiles) {
 			readFile(datafile);			
 		}
 	}
 	
-	private void readFile(DataFile datafile) throws IOException {
+	private void readFile(DataInputAdapter datafile) throws IOException {
 		try (InputStream in = datafile.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			String line = reader.readLine();
@@ -128,7 +131,7 @@ public class ClsCmcf extends AbstractDataSource {
 			}
 			scandata.setMaxEnergy(energy);
 			
-			scandata.add(new ISpectrum(values));
+			scandata.add(new ArraySpectrum(values));
 			
 		}
 	}

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -11,13 +13,12 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.SimpleScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.Bounds;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
@@ -50,7 +51,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 
 
 	
-	public void read(DataFile datafile) throws IOException {
+	public void read(DataInputAdapter datafile) throws IOException {
 
 		scandata = new SimpleScanData(datafile.getBasename());
 
@@ -109,7 +110,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 			for (int x = 0; x < dx; x++) { // x-axis
 
 				int scan_index = (x + y * dx);
-				Spectrum s = new ISpectrum(dz);
+				Spectrum s = new ArraySpectrum(dz);
 
 				for (int z = 0; z < dz; z++) { // (z-axis, channelCount)
 
@@ -128,8 +129,8 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<DataFile> files) throws IOException {
-		read(files.get(0));
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		read(ctx.inputs().get(0));
 	}
 
 
@@ -161,7 +162,7 @@ public class SigrayHDF5 extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 

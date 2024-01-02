@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Supplier;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.PeakabooLists;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.framework.cyclops.Pair;
 import org.peakaboo.framework.cyclops.Range;
 import org.peakaboo.framework.cyclops.SparsedList;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -36,7 +36,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 	
 	
 	private static final String ABORT_MESSAGE = "Aborted by User"; 
-	DataFile sourceFile;
+	DataInputAdapter sourceFile;
 	
 	private XMLReader									xr;
 
@@ -89,7 +89,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 		super();
 	}
 	
-	public void read(DataFile file, Supplier<Boolean> isAborted) throws DataSourceReadException, IOException
+	public void read(DataInputAdapter file, Supplier<Boolean> isAborted) throws DataSourceReadException, IOException
 	{
 		this.sourceFile = file;
 		this.isAborted = isAborted;
@@ -405,7 +405,7 @@ public abstract class CDFMLReader extends DefaultHandler2
 	private Spectrum getSpectrumFromString(int size, String scanString)
 	{
 		
-		Spectrum s = new ISpectrum(size);
+		Spectrum s = new ArraySpectrum(size);
 		
 		
 		int startIndex = 0;
@@ -549,10 +549,10 @@ public abstract class CDFMLReader extends DefaultHandler2
 		switch (getVarType(var)) {
 			
 			case REAL:
-				return ((List<Float>)getEntriesForVar(var)).stream().map(v -> new ISpectrum(1, v.floatValue())).collect(toList());
+				return ((List<Float>)getEntriesForVar(var)).stream().map(v -> new ArraySpectrum(1, v.floatValue())).collect(toList());
 				
 			case INTEGER:
-				return ((List<Integer>)getEntriesForVar(var)).stream().map(v -> new ISpectrum(1, v.floatValue())).collect(toList());
+				return ((List<Integer>)getEntriesForVar(var)).stream().map(v -> new ArraySpectrum(1, v.floatValue())).collect(toList());
 				
 			case SPECTRUM:
 				return (List<Spectrum>)getEntriesForVar(var);

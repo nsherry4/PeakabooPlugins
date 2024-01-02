@@ -7,16 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.datasize.SimpleDataSize;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.physicalsize.SimplePhysicalSize;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.plugins.universalhdf5.SimpleHDF5DataSource;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.SISize;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 
 import ch.systemsx.cisd.base.mdarray.MDFloatArray;
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
@@ -49,16 +49,18 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 	
 	@Override
-	public void read(List<DataFile> paths) throws DataSourceReadException, IOException, InterruptedException {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> paths = ctx.inputs();
+		
 		if (paths.size() != 1) {
 			throw new UnsupportedOperationException();
 		}
-		super.read(paths);
+		super.read(ctx);
 		readPhysicalSize(paths.get(0));
 	}
 	
 	@Override
-	protected DataSize getDataSize(List<DataFile> paths, HDF5DataSetInformation info) {
+	protected DataSize getDataSize(List<DataInputAdapter> paths, HDF5DataSetInformation info) {
 		long[] dimensions = info.getDimensions();
 		SimpleDataSize dataSize = new SimpleDataSize();
 		dataSize.setDataHeight((int) dimensions[0]);
@@ -68,7 +70,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 
 	
 	@Override
-	protected void readFile(DataFile path, int filenum) throws DataSourceReadException, IOException, InterruptedException {
+	protected void readFile(DataInputAdapter path, int filenum) throws DataSourceReadException, IOException, InterruptedException {
 		String entry = "/2D Scan/MCA 1";
 		IHDF5Reader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		
@@ -88,7 +90,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 						
 			for (int column = 0; column < columnCount; column++) {
 				float[] scan = Arrays.copyOfRange(rowData, (int)(column*scanSize), (int)((column+1)*scanSize));
-				super.submitScan((int)(row*columnCount+column), new ISpectrum(scan, false));
+				super.submitScan((int)(row*columnCount+column), new ArraySpectrum(scan, false));
 			}
 			
 			if (getInteraction().checkReadAborted()) {
@@ -129,7 +131,7 @@ public class APSSector20 extends SimpleHDF5DataSource {
 	}
 	
 
-	private void readPhysicalSize(DataFile path) throws IOException {
+	private void readPhysicalSize(DataInputAdapter path) throws IOException {
 		IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
 		float[] ypos = reader.readFloatArray("/2D Scan/Y Positions");
 		float[] xpos = reader.readFloatArray("/2D Scan/X Positions");

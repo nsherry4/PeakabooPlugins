@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -22,14 +23,13 @@ import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.Analysis;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.DataSourceAnalysis;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.Bounds;
 import org.peakaboo.framework.cyclops.Coord;
 import org.peakaboo.framework.cyclops.Range;
 import org.peakaboo.framework.cyclops.SISize;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
 
@@ -149,7 +149,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		if (!reader.hasVar(CDFMLStrings.VAR_NORMALISE)) return 1f;
 		
 		if (iNaughtNormalized == null) {
-			iNaughtNormalized = SpectrumCalculations.normalize(new ISpectrum(reader.getVarFloats(CDFMLStrings.VAR_NORMALISE)));
+			iNaughtNormalized = SpectrumCalculations.normalize(new ArraySpectrum(reader.getVarFloats(CDFMLStrings.VAR_NORMALISE)));
 		}
 		
 		return iNaughtNormalized.get(index);
@@ -207,7 +207,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		{
 			
 			
-			s = new ISpectrum(getScan(0, 0).size(), 0f);
+			s = new ArraySpectrum(getScan(0, 0).size(), 0f);
 			for (Integer i : new Range(0, numElements()))
 			{
 				
@@ -244,9 +244,9 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 			Spectrum raw = getScan(index);
 			
 			if (raw == null) {
-				s = new ISpectrum(getScan(0, 0).size(), 0f);
+				s = new ArraySpectrum(getScan(0, 0).size(), 0f);
 			} else {
-				s = new ISpectrum(getScan(index));
+				s = new ArraySpectrum(getScan(index));
 			}
 			
 			//adjust for deadtime
@@ -568,7 +568,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	//==============================================
 
 
-	public FileFormatCompatibility compatibility(DataFile path)
+	public FileFormatCompatibility compatibility(DataInputAdapter path)
 	{	
 		String ext = path.getFilename();
 		if (!   (ext.endsWith(".xml") || ext.endsWith(".cdfml"))  ) return FileFormatCompatibility.NO;
@@ -603,7 +603,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> paths)
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> paths)
 	{
 		if (paths.size() != 1) {
 			return FileFormatCompatibility.NO;
@@ -613,7 +613,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 		
 	}
 
-	public void read(DataFile file) throws IOException, DataSourceReadException
+	public void read(DataInputAdapter file) throws IOException, DataSourceReadException
 	{
 		this.analysis = new DataSourceAnalysis();
 		reader.read(file, this.getInteraction()::checkReadAborted);
@@ -628,8 +628,9 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 	}
 
 	@Override
-	public void read(List<DataFile> files) throws DataSourceReadException, IOException
-	{
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> files = ctx.inputs();
+		
 		if (files == null) throw new UnsupportedOperationException();
 		if (files.size() == 0) throw new UnsupportedOperationException();
 		if (files.size() > 1) throw new UnsupportedOperationException();
@@ -686,7 +687,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 
 	@Override
-	public Optional<Group> getParameters(List<DataFile> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
@@ -13,16 +14,15 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.PipelineScanData;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.filter.model.Filter;
 import org.peakaboo.filter.plugins.noise.WeightedAverageNoiseFilter;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.autodialog.model.Parameter;
 import org.peakaboo.framework.autodialog.model.style.editors.IntegerSpinnerStyle;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
-import org.peakaboo.framework.cyclops.spectrum.ReadOnlySpectrum;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
+import org.peakaboo.framework.cyclops.spectrum.SpectrumView;
 
 public class RawByteDataSourcePlugin extends AbstractDataSource {
 
@@ -37,17 +37,17 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 	}
 	
 	@Override
-	public Optional<Group> getParameters(List<DataFile> datafiles) {
+	public Optional<Group> getParameters(List<DataInputAdapter> datafiles) {
 		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
-		DataFile datafile = datafiles.get(0);		
+		DataInputAdapter datafile = datafiles.get(0);		
 		
 		/*
 		 * We perform a kind of autocorrelation test to try and guess what the channel
 		 * count per spectrum is.
 		 */
-		ReadOnlySpectrum sample = smoothSample(loadSample(datafile, 65536));
+		SpectrumView sample = smoothSample(loadSample(datafile, 65536));
 		if (sample != null) {
 			float bestScore = 0;
 			int bestPeriod = 2048;
@@ -65,7 +65,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 		return Optional.of(parameters);
 	}
 
-	private Spectrum loadSample(DataFile datafile, int size) {
+	private Spectrum loadSample(DataInputAdapter datafile, int size) {
 		
 		try {
 			BufferedInputStream bis = new BufferedInputStream(datafile.getInputStream());
@@ -74,7 +74,7 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 			if (bytesRead != size) {
 				return null;
 			}
-			Spectrum sample = new ISpectrum(size);
+			Spectrum sample = new ArraySpectrum(size);
 			for (int i = 0; i < size; i++) {
 				sample.set(i, byteArray[i]);
 			}
@@ -85,13 +85,13 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 
 	}
 	
-	private ReadOnlySpectrum smoothSample(Spectrum sample) {
+	private SpectrumView smoothSample(Spectrum sample) {
 		Filter filter = new WeightedAverageNoiseFilter();
 		filter.initialize();
 		return filter.filter(sample);
 	}
 	
-	private float offsetScore(ReadOnlySpectrum sample, int offset) {
+	private float offsetScore(SpectrumView sample, int offset) {
 		/*
 		 * We don't compensate for the number of points overlapping, because more points
 		 * overlapping biases the algorithm towards not detecting some multiple of the
@@ -131,11 +131,13 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 	}
 
 	@Override
-	public void read(List<DataFile> datafiles) throws IOException, DataSourceReadException, InterruptedException {
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		List<DataInputAdapter> datafiles = ctx.inputs();
+		
 		if (datafiles.size() != 1) {
 			throw new IllegalArgumentException(getFileFormat().getFormatName() + " requires exactly 1 file");
 		}
-		DataFile datafile = datafiles.get(0);
+		DataInputAdapter datafile = datafiles.get(0);
 		int dataChannels = paramChannels.getValue();
 		
 		scandata = new PipelineScanData(datafile.getBasename());
@@ -159,11 +161,15 @@ public class RawByteDataSourcePlugin extends AbstractDataSource {
 				asFloatArray[i] = byteArray[i];
 			}
 			
-			scandata.submit(index++, new ISpectrum(asFloatArray));
+			scandata.submit(index++, new ArraySpectrum(asFloatArray));
 
 			count++;
 			if (count == 100) {
 				getInteraction().notifyScanRead(count);
+				if (getInteraction().checkReadAborted()) {
+					scandata.abort();
+					return;
+				}
 				count = 0;
 			}
 			

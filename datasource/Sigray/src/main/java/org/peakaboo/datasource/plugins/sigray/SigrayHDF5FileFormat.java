@@ -5,9 +5,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 import ch.systemsx.cisd.hdf5.HDF5DataSetInformation;
 import ch.systemsx.cisd.hdf5.HDF5Factory;
@@ -20,7 +20,7 @@ public class SigrayHDF5FileFormat implements FileFormat {
 		return Arrays.asList("h5", "hdf5");
 	}
 
-	public FileFormatCompatibility compatibility(DataFile path) {
+	public FileFormatCompatibility compatibility(DataInputAdapter path) {
 		
 		try {
 			IHDF5SimpleReader reader = HDF5Factory.openForReading(path.getAndEnsurePath().toFile());
@@ -34,7 +34,7 @@ public class SigrayHDF5FileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> paths) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> paths) {
 		if (paths.size() != 1) {
 			return FileFormatCompatibility.NO;
 		}

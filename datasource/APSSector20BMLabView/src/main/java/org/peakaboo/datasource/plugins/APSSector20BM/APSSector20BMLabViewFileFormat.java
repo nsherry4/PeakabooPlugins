@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.peakaboo.app.PeakabooLog;
+import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.dataset.source.model.datafile.DataFile;
 
 public class APSSector20BMLabViewFileFormat implements FileFormat {
 
@@ -21,12 +21,12 @@ public class APSSector20BMLabViewFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataFile> filenames) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> filenames) {
 		if (filenames.size() != 1) {
 			return FileFormatCompatibility.NO;
 		}
 		
-		DataFile file = filenames.get(0);
+		DataInputAdapter file = filenames.get(0);
 		try (InputStream in = file.getInputStream()){
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			
