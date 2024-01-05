@@ -19,12 +19,12 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.Analysis;
-import org.peakaboo.dataset.source.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.util.StringInput;
+import org.peakaboo.tier.Tier;
 
 
 
@@ -59,7 +59,7 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 		
 		Spectrum s = new ArraySpectrum(lines.subList(startIndex, endIndex).stream().map(line -> Float.parseFloat(line)).collect(toList()));
 		
-		analysis = new DataSourceAnalysis();
+		analysis = Tier.provider().createDataSourceAnalysis();
 		analysis.process(s);
 		
 		r.close();

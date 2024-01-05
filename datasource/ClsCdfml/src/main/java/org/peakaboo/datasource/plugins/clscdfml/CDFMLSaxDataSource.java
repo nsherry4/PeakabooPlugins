@@ -22,7 +22,6 @@ import org.peakaboo.dataset.source.model.components.metadata.Metadata;
 import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
 import org.peakaboo.dataset.source.model.components.scandata.ScanData;
 import org.peakaboo.dataset.source.model.components.scandata.analysis.Analysis;
-import org.peakaboo.dataset.source.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.Bounds;
@@ -32,6 +31,7 @@ import org.peakaboo.framework.cyclops.SISize;
 import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
 import org.peakaboo.framework.cyclops.spectrum.SpectrumCalculations;
+import org.peakaboo.tier.Tier;
 
 
 public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, DataSize, PhysicalSize, FileFormat, ScanData
@@ -615,7 +615,7 @@ public class CDFMLSaxDataSource extends AbstractDataSource implements Metadata, 
 
 	public void read(DataInputAdapter file) throws IOException, DataSourceReadException
 	{
-		this.analysis = new DataSourceAnalysis();
+		this.analysis = Tier.provider().createDataSourceAnalysis();
 		reader.read(file, this.getInteraction()::checkReadAborted);
 
 		
