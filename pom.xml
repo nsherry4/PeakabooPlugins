@@ -12,9 +12,7 @@
 	<url>http://maven.apache.org</url>
 
 	<modules>
-		<module>filter</module>
 		<module>datasource</module>
-		<module>AllInOne</module>
 	</modules>
 
 	<dependencies>
