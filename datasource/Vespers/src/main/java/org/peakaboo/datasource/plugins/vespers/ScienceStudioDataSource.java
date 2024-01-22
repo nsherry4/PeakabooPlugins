@@ -1,6 +1,6 @@
 package org.peakaboo.datasource.plugins.vespers;
 
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
 
 /**
  * @author maxweld

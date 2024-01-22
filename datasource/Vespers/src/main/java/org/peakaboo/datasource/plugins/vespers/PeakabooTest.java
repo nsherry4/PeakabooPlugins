@@ -1,10 +1,6 @@
 package org.peakaboo.datasource.plugins.vespers;
 
-import java.io.File;
-import java.util.Arrays;
-
-import org.peakaboo.datasource.model.DataSource;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.DataSource;
 
 public class PeakabooTest {
 
@@ -12,8 +8,8 @@ public class PeakabooTest {
 		
 		DataSource ds = new ScienceStudioDataSource();
 		
-		FileFormatCompatibility compat = ds.getFileFormat().compatibility(Arrays.asList(new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006.dat").toPath(), new File("/home/nathaniel/Projects/SS/Peakaboo Data/Old CLS/12hcaustic.006_spectra.dat").toPath()));
-		System.out.println(compat);
+		//FileFormatCompatibility compat = ds.getFileFormat().compatibility(Arrays.asList(new File("12hcaustic.006.dat").toPath(), new File("12hcaustic.006_spectra.dat").toPath()));
+		//System.out.println(compat);
 		
 	}
 	

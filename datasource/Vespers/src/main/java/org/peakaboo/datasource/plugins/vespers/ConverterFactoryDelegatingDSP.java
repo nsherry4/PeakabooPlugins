@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,11 +11,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.peakaboo.datasource.model.DataSource;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.internal.DelegatingDataSource;
-import org.peakaboo.datasource.plugin.JavaDataSourcePlugin;
+import org.peakaboo.dataset.io.DataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSource;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.internal.DelegatingDataSource;
+import org.peakaboo.dataset.source.plugin.DataSourcePlugin;
 import org.peakaboo.datasource.plugins.vespers.vespers.data.converter.factory.MapXYVespersToPDSConverterFactory;
 
 import ca.sciencestudio.data.converter.Converter;
@@ -29,14 +30,13 @@ import ca.sciencestudio.data.daf.DAFRecordParser;
 import ca.sciencestudio.data.daf.DAFRegexElementParser;
 import ca.sciencestudio.data.daf.DAFRegexRecordParser;
 import ca.sciencestudio.data.standard.StdConverter;
-import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.data.support.ConverterFactoryException;
 
 /**
  * @author maxweld
  *
  */
-public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource implements StdConverter, JavaDataSourcePlugin, FileFormat {
+public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource implements StdConverter, DataSourcePlugin, FileFormat {
 
 	private static final String DATA_FILE_FIRST_LINE = "# CLS Data Acquisition";
 
@@ -452,9 +452,13 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 	}
 	
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> files) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> inputs) {
 		try {
-			doCanRead(files.stream().map(Path::toFile).collect(Collectors.toList()));
+			var files = new ArrayList<File>();
+			for (var input : inputs) {
+				files.add(input.getAndEnsurePath().toFile());
+			}
+			doCanRead(files);
 			return FileFormatCompatibility.MAYBE_BY_FILENAME;
 		}
 		catch(Exception e) {
@@ -464,13 +468,21 @@ public abstract class ConverterFactoryDelegatingDSP extends DelegatingDataSource
 	
 
 	@Override
-	public void read(List<Path> files) throws Exception { 
-		Converter converter = CONVERTER_FACTORY.getConverter(doCanRead(files.stream().map(Path::toFile).collect(Collectors.toList())));
-		Object dataSource =	converter.convert().get(RESPONSE_KEY_PEAKABOO_DATA_SOURCE);
-		if(dataSource instanceof DataSource) {
-			setDataSource((DataSource)dataSource);
-		} else {
-			throw new ConverterException("Converter response does not contain a Peakaboo DataSource.");
+	public void read(DataSourceContext ctx) throws DataSourceReadException { 
+		try {
+			var files = new ArrayList<File>();
+			for (var input : ctx.inputs()) {
+				files.add(input.getAndEnsurePath().toFile());
+			}
+			Converter converter = CONVERTER_FACTORY.getConverter(doCanRead(files));
+			Object dataSource =	converter.convert().get(RESPONSE_KEY_PEAKABOO_DATA_SOURCE);
+			if(dataSource instanceof DataSource) {
+				setDataSource((DataSource)dataSource);
+			} else {
+				throw new DataSourceReadException("Converter response does not contain a Peakaboo DataSource.");
+			}
+		} catch (Exception e) {
+			throw new DataSourceReadException("Failed to read dataset", e);
 		}
 	}
 	

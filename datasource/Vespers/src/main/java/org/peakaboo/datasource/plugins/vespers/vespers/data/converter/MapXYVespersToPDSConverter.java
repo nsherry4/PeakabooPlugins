@@ -1,7 +1,7 @@
 package org.peakaboo.datasource.plugins.vespers.vespers.data.converter;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -10,18 +10,27 @@ import java.util.Optional;
 
 import javax.naming.OperationNotSupportedException;
 
-import org.peakaboo.datasource.model.DataSource;
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormat;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.components.interaction.Interaction;
-import org.peakaboo.datasource.model.components.interaction.SimpleInteraction;
-import org.peakaboo.datasource.model.components.metadata.Metadata;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.datasource.model.components.scandata.ScanData;
-import org.peakaboo.datasource.model.components.scandata.analysis.Analysis;
-import org.peakaboo.datasource.model.components.scandata.analysis.DataSourceAnalysis;
+import org.peakaboo.dataset.io.DataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSource;
+import org.peakaboo.dataset.source.model.DataSourceReadException;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormat;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.components.interaction.Interaction;
+import org.peakaboo.dataset.source.model.components.interaction.SimpleInteraction;
+import org.peakaboo.dataset.source.model.components.metadata.Metadata;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.dataset.source.model.components.scandata.ScanData;
+import org.peakaboo.dataset.source.model.components.scandata.analysis.Analysis;
+import org.peakaboo.dataset.source.model.components.scandata.analysis.DataSourceAnalysis;
 import org.peakaboo.datasource.plugins.vespers.ConverterFactoryDelegatingDSP;
+import org.peakaboo.framework.autodialog.model.Group;
+import org.peakaboo.framework.cyclops.Bounds;
+import org.peakaboo.framework.cyclops.Coord;
+import org.peakaboo.framework.cyclops.SISize;
+import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
+import org.peakaboo.framework.cyclops.spectrum.Spectrum;
+import org.peakaboo.tier.Tier;
 
 import ca.sciencestudio.data.daf.DAFDataParser;
 import ca.sciencestudio.data.daf.DAFRecord;
@@ -29,12 +38,6 @@ import ca.sciencestudio.data.daf.DAFSpectrumParser;
 import ca.sciencestudio.data.standard.StdConverter;
 import ca.sciencestudio.data.support.ConverterException;
 import ca.sciencestudio.vespers.data.converter.AbstractMapXYVespersConverter;
-import org.peakaboo.framework.cyclops.Bounds;
-import org.peakaboo.framework.cyclops.Coord;
-import org.peakaboo.framework.cyclops.SISize;
-import org.peakaboo.framework.cyclops.spectrum.ISpectrum;
-import org.peakaboo.framework.cyclops.spectrum.Spectrum;
-import org.peakaboo.framework.autodialog.model.Group;
 
 /**
  * 
@@ -339,9 +342,9 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 		}
 		
 		// Fill scans with spectrums //
-		this.analysis = new DataSourceAnalysis();
+		this.analysis = Tier.provider().createDataSourceAnalysis();
 		for(float[] spectrum : spectrums) {
-			ISpectrum s = new ISpectrum(spectrum, false);
+			Spectrum s = new ArraySpectrum(spectrum, false);
 			this.analysis.process(s);
 			scans.add(s);
 		}
@@ -713,15 +716,11 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 
 
 	@Override
-	public FileFormatCompatibility compatibility(List<Path> files) {
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> files) {
 		return FileFormatCompatibility.NO;
 	}
 
 
-	@Override
-	public void read(List<Path> files) throws Exception {
-		throw new OperationNotSupportedException();
-	}
 	
 	// DSScanData //
 	
@@ -869,13 +868,18 @@ public class MapXYVespersToPDSConverter extends AbstractMapXYVespersConverter im
 	}
 
 	@Override
-	public Optional<Group> getParameters(List<Path> paths) {
+	public Optional<Group> getParameters(List<DataInputAdapter> paths) {
 		return Optional.empty();
 	}
 
 	@Override
 	public Analysis getAnalysis() {
 		return this.analysis;
+	}
+
+	@Override
+	public void read(DataSourceContext ctx) throws DataSourceReadException, IOException, InterruptedException {
+		throw new DataSourceReadException("Operation not supported", new OperationNotSupportedException());
 	}
 
 

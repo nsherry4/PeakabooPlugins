@@ -1,18 +1,19 @@
 package org.peakaboo.datasource.plugins.vespers;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.peakaboo.datasource.model.DataSource;
-import org.peakaboo.datasource.model.components.datasize.DataSize;
-import org.peakaboo.datasource.model.components.fileformat.FileFormatCompatibility;
-import org.peakaboo.datasource.model.components.metadata.Metadata;
-import org.peakaboo.datasource.model.components.physicalsize.PhysicalSize;
-import org.peakaboo.framework.cyclops.spectrum.ReadOnlySpectrum;
+import org.peakaboo.dataset.io.DataInputAdapter;
+import org.peakaboo.dataset.io.PathDataInputAdapter;
+import org.peakaboo.dataset.source.model.DataSource;
+import org.peakaboo.dataset.source.model.DataSource.DataSourceContext;
+import org.peakaboo.dataset.source.model.components.datasize.DataSize;
+import org.peakaboo.dataset.source.model.components.fileformat.FileFormatCompatibility;
+import org.peakaboo.dataset.source.model.components.metadata.Metadata;
+import org.peakaboo.dataset.source.model.components.physicalsize.PhysicalSize;
+import org.peakaboo.framework.cyclops.spectrum.SpectrumView;
 
 /**
  * @author maxweld
@@ -30,11 +31,12 @@ public class ScienceStudioDSPCmdLineTest {
 		DataSource dataSource = new ScienceStudioDataSource();
 		
 		List<String> filenames = Arrays.asList(args);
-		List<Path> files = filenames.stream().map(s -> new File(s).toPath()).collect(Collectors.toList());
+		List<DataInputAdapter> files = filenames.stream().map(PathDataInputAdapter::new).collect(Collectors.toList());
 		
 		if(dataSource.getFileFormat().compatibility(files) != FileFormatCompatibility.NO) {
 			System.out.println("Reading: " + filenames);
-			dataSource.read(files);
+			var ctx = new DataSourceContext(files);
+			dataSource.read(ctx);
 			System.out.println("DONE!");
 		}		
 		else {
@@ -76,7 +78,7 @@ public class ScienceStudioDSPCmdLineTest {
 		}
 	}
 
-	protected static String spectrumToString(ReadOnlySpectrum spectrum, int limit) {
+	protected static String spectrumToString(SpectrumView spectrum, int limit) {
 		boolean first = true;
 		StringBuffer buffer = new StringBuffer("[");
 		for(int i=0; i<spectrum.size(); i++) {
