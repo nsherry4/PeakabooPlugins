@@ -13,17 +13,17 @@ jobs:
 
     steps:
     
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 21
         distribution: 'corretto'
         cache: maven
 
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         repository: nsherry4/Peakaboo
         ref: ${{ github.ref }}
@@ -32,9 +32,6 @@ jobs:
     - name: Install base Peakaboo to Maven's local package store
       run: mvn -B install --file pom.xml
       working-directory: ./Peakaboo
-
-
-
 
 
     - name: Build with Maven
