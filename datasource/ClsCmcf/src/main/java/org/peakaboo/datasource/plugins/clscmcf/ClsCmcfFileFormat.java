@@ -24,19 +24,19 @@ public class ClsCmcfFileFormat implements FileFormat {
 	}
 
 	@Override
-	public FileFormatCompatibility compatibility(List<DataInputAdapter> filenames) {
-		if (filenames.isEmpty()) { return FileFormatCompatibility.NO; }
+	public FileFormatCompatibility compatibility(List<DataInputAdapter> inputs) {
+		if (inputs.isEmpty()) { return FileFormatCompatibility.NO; }
 		
 		AlphaNumericComparitor alphacomp = new AlphaNumericComparitor();
-		filenames.sort((f1, f2) -> alphacomp.compare(f1.toString(), f2.toString()));
+		inputs.sort((f1, f2) -> alphacomp.compare(f1.getFilename(), f2.getFilename()));
 		
-		for (DataInputAdapter path : filenames) {
-			if (!path.toString().endsWith("xdi")) {
+		for (DataInputAdapter input : inputs) {
+			if (!input.getFilename().endsWith("xdi")) {
 				return FileFormatCompatibility.NO;
 			}
 		}
 		
-		DataInputAdapter file = filenames.get(0);
+		DataInputAdapter file = inputs.get(0);
 		
 		try (InputStream in = file.getInputStream()) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));

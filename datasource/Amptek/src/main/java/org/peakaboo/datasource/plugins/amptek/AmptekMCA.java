@@ -2,14 +2,12 @@ package org.peakaboo.datasource.plugins.amptek;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.peakaboo.dataset.io.DataInputAdapter;
 import org.peakaboo.dataset.source.model.DataSourceReadException;
 import org.peakaboo.dataset.source.model.components.datasize.DataSize;
@@ -23,7 +21,6 @@ import org.peakaboo.dataset.source.plugin.AbstractDataSource;
 import org.peakaboo.framework.autodialog.model.Group;
 import org.peakaboo.framework.cyclops.spectrum.ArraySpectrum;
 import org.peakaboo.framework.cyclops.spectrum.Spectrum;
-import org.peakaboo.framework.cyclops.util.StringInput;
 import org.peakaboo.tier.Tier;
 
 
@@ -51,8 +48,8 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 	
 	private Spectrum readMCA(DataInputAdapter file) throws IOException
 	{
-		BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream()));
-		List<String> lines = StringInput.lines(r).stream().collect(Collectors.toList());
+	
+		List<String> lines = IOUtils.readLines(file.getInputStream()); 
 		
 		int startIndex = lines.indexOf("<<DATA>>") + 1;
 		int endIndex = lines.indexOf("<<END>>");
@@ -61,8 +58,6 @@ public class AmptekMCA extends AbstractDataSource implements ScanData {
 		
 		analysis = Tier.provider().createDataSourceAnalysis();
 		analysis.process(s);
-		
-		r.close();
 		
 		return s;
 		
