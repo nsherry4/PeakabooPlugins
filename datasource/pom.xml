@@ -29,6 +29,7 @@
 		<module>ClsCmcf</module>
 		<module>CHESS</module>
 		<module>Horiba5200</module>
+		<module>xlsx</module>
 	</modules>
 
 	<build>
