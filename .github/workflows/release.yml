@@ -1,4 +1,5 @@
 name: Build Plugins Release
+run-name: Packaging Peakaboo Plugins ${{ github.ref_name }} for Release
 
 on: workflow_dispatch
 
@@ -10,6 +11,8 @@ jobs:
     steps:
     
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
     
     - name: Set up JDK
       uses: actions/setup-java@v4
@@ -18,11 +21,10 @@ jobs:
         distribution: 'corretto'
         cache: maven
 
-
     - uses: actions/checkout@v4
       with:
         repository: nsherry4/Peakaboo
-        ref: ${{ github.ref }}
+        ref: master
         path: ./Peakaboo
 
     - name: Install base Peakaboo to Maven's local package store
